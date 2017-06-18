@@ -32,8 +32,10 @@ package jpass.ui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.DefaultListModel;
@@ -55,6 +57,7 @@ import jpass.ui.action.ListListener;
 import jpass.ui.action.MenuActionType;
 import jpass.ui.helper.EntryHelper;
 import jpass.ui.helper.FileHelper;
+import jpass.util.FileUtils;
 
 /**
  * The main frame for JPass.
@@ -190,12 +193,12 @@ public final class JPassFrame extends JFrame {
 
         setJMenuBar(this.menuBar);
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        int width = 420;
+        int width = 500;
         // largeur de la fenêtre
         if (args.length >= 2) {
         	width = Integer.parseInt(args[1]);
         }
-        int height = 400;
+        int height = 1000;
         // hauteur de la fenêtre
         if (args.length >= 3) {
         	height = Integer.parseInt(args[2]);
@@ -209,8 +212,16 @@ public final class JPassFrame extends JFrame {
         if (args.length >= 1) {
         	LOGGER.info("on précharge le fichier passé en ligne de commande.");
         	FileHelper.doOpenFile(args[0], this);
-        }
-
+        } else {
+        	// on recherche un fichier .jpass au même endroit
+        	LOGGER.info("on précharge le premier fichier jpass situé dans le même répertoire.");
+        	try {
+				FileHelper.doOpenFile(FileUtils.findJPassFile(), this);
+			} catch (IOException e) {
+				LOGGER.log(Level.WARNING, "", e);
+			}
+        } 
+        	
         // set focus to the list for easier keyboard navigation
         this.entryTitleList.requestFocusInWindow();
     }
