@@ -29,6 +29,8 @@
 
 package jpass;
 
+import java.awt.Toolkit;
+
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.plaf.ColorUIResource;
@@ -45,6 +47,8 @@ import jpass.ui.JPassFrame;
  */
 public class JPass {
 
+	public static final int MASK = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+	
     public static void main(final String[] args) {
         MetalLookAndFeel.setCurrentTheme(new DefaultMetalTheme() {
             private final ColorUIResource primary1 = new ColorUIResource(0x4d6781);

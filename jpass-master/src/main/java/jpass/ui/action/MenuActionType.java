@@ -29,6 +29,8 @@
 
 package jpass.ui.action;
 
+import jpass.JPass;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -53,7 +55,8 @@ import jpass.xml.bind.Entry;
  *
  */
 public enum MenuActionType {
-    NEW_FILE("jpass.menu.new_file_action", new AbstractMenuAction("New", MessageDialog.getIcon("new"), KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK)) {
+	
+    NEW_FILE("jpass.menu.new_file_action", new AbstractMenuAction("New", MessageDialog.getIcon("new"), KeyStroke.getKeyStroke(KeyEvent.VK_N, JPass.MASK)) {
         private static final long serialVersionUID = -8823457568905830188L;
         @Override
         public void actionPerformed(ActionEvent ev) {
@@ -61,7 +64,7 @@ public enum MenuActionType {
         }
     }),
 
-    OPEN_FILE("jpass.menu.open_file_action", new AbstractMenuAction("Open File...", MessageDialog.getIcon("open"), KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK)) {
+    OPEN_FILE("jpass.menu.open_file_action", new AbstractMenuAction("Open File...", MessageDialog.getIcon("open"), KeyStroke.getKeyStroke(KeyEvent.VK_O, JPass.MASK)) {
         private static final long serialVersionUID = -441032579227887886L;
         @Override
         public void actionPerformed(ActionEvent ev) {
@@ -69,7 +72,7 @@ public enum MenuActionType {
         }
     }),
 
-    SAVE_FILE("jpass.menu.save_file_action", new AbstractMenuAction("Save", MessageDialog.getIcon("save"), KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK)) {
+    SAVE_FILE("jpass.menu.save_file_action", new AbstractMenuAction("Save", MessageDialog.getIcon("save"), KeyStroke.getKeyStroke(KeyEvent.VK_S, JPass.MASK)) {
         private static final long serialVersionUID = 8657273941022043906L;
         @Override
         public void actionPerformed(ActionEvent ev) {
@@ -119,7 +122,7 @@ public enum MenuActionType {
         }
     }),
 
-    GENERATE_PASSWORD("jpass.menu.generate_password_action", new AbstractMenuAction("Generate Password...", MessageDialog.getIcon("generate"), KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK)) {
+    GENERATE_PASSWORD("jpass.menu.generate_password_action", new AbstractMenuAction("Generate Password...", MessageDialog.getIcon("generate"), KeyStroke.getKeyStroke(KeyEvent.VK_Z, JPass.MASK)) {
         private static final long serialVersionUID = 2865402858056954304L;
         @Override
         public void actionPerformed(ActionEvent ev) {
@@ -158,15 +161,16 @@ public enum MenuActionType {
         }
     }),
 
-    FIND_ENTRY("jpass.menu.find_entry_action", new AbstractMenuAction("Find Entry...", MessageDialog.getIcon("page_white_find"), KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK)) {
-        
-        @Override
+    FIND_ENTRY("jpass.menu.find_entry_action", new AbstractMenuAction("Find Entry...", MessageDialog.getIcon("page_white_find"), KeyStroke.getKeyStroke(KeyEvent.VK_F, JPass.MASK)) {
+		private static final long serialVersionUID = 6793989246928698613L;
+
+		@Override
         public void actionPerformed(ActionEvent ev) {
             EntryHelper.findEntry(JPassFrame.getInstance());
         }
     }),
     
-    ADD_ENTRY("jpass.menu.add_entry_action", new AbstractMenuAction("Add Entry...", MessageDialog.getIcon("entry_new"), KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_MASK)) {
+    ADD_ENTRY("jpass.menu.add_entry_action", new AbstractMenuAction("Add Entry...", MessageDialog.getIcon("entry_new"), KeyStroke.getKeyStroke(KeyEvent.VK_Y, JPass.MASK)) {
         private static final long serialVersionUID = 6793989246928698613L;
         @Override
         public void actionPerformed(ActionEvent ev) {
@@ -174,7 +178,7 @@ public enum MenuActionType {
         }
     }),
 
-    EDIT_ENTRY("jpass.menu.edit_entry_action", new AbstractMenuAction("Edit Entry...", MessageDialog.getIcon("entry_edit"), KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK)) {
+    EDIT_ENTRY("jpass.menu.edit_entry_action", new AbstractMenuAction("Edit Entry...", MessageDialog.getIcon("entry_edit"), KeyStroke.getKeyStroke(KeyEvent.VK_E, JPass.MASK)) {
         private static final long serialVersionUID = -3234220812811327191L;
         @Override
         public void actionPerformed(ActionEvent ev) {
@@ -182,7 +186,7 @@ public enum MenuActionType {
         }
     }),
 
-    DUPLICATE_ENTRY("jpass.menu.duplicate_entry_action", new AbstractMenuAction("Duplicate Entry...", MessageDialog.getIcon("entry_duplicate"), KeyStroke.getKeyStroke(KeyEvent.VK_K, InputEvent.CTRL_MASK)) {
+    DUPLICATE_ENTRY("jpass.menu.duplicate_entry_action", new AbstractMenuAction("Duplicate Entry...", MessageDialog.getIcon("entry_duplicate"), KeyStroke.getKeyStroke(KeyEvent.VK_K, JPass.MASK)) {
         private static final long serialVersionUID = 6728896867346523861L;
         @Override
         public void actionPerformed(ActionEvent ev) {
@@ -190,7 +194,7 @@ public enum MenuActionType {
         }
     }),
 
-    DELETE_ENTRY("jpass.menu.delete_entry_action", new AbstractMenuAction("Delete Entry...", MessageDialog.getIcon("entry_delete"), KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_MASK)) {
+    DELETE_ENTRY("jpass.menu.delete_entry_action", new AbstractMenuAction("Delete Entry...", MessageDialog.getIcon("entry_delete"), KeyStroke.getKeyStroke(KeyEvent.VK_D, JPass.MASK)) {
         private static final long serialVersionUID = -1306116722130641659L;
         @Override
         public void actionPerformed(ActionEvent ev) {
@@ -198,7 +202,7 @@ public enum MenuActionType {
         }
     }),
 
-    COPY_URL("jpass.menu.copy_url_action", new AbstractMenuAction("Copy URL", MessageDialog.getIcon("url"), KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_MASK)) {
+    COPY_URL("jpass.menu.copy_url_action", new AbstractMenuAction("Copy URL", MessageDialog.getIcon("url"), KeyStroke.getKeyStroke(KeyEvent.VK_U, JPass.MASK)) {
         private static final long serialVersionUID = 3321559756310744862L;
         @Override
         public void actionPerformed(ActionEvent ev) {
@@ -210,7 +214,7 @@ public enum MenuActionType {
         }
     }),
 
-    COPY_USER("jpass.menu.copy_user_action", new AbstractMenuAction("Copy User Name", MessageDialog.getIcon("user"), KeyStroke.getKeyStroke(KeyEvent.VK_B, InputEvent.CTRL_MASK)) {
+    COPY_USER("jpass.menu.copy_user_action", new AbstractMenuAction("Copy User Name", MessageDialog.getIcon("user"), KeyStroke.getKeyStroke(KeyEvent.VK_B, JPass.MASK)) {
         private static final long serialVersionUID = -1126080607846730912L;
         @Override
         public void actionPerformed(ActionEvent ev) {
@@ -222,7 +226,7 @@ public enum MenuActionType {
         }
     }),
 
-    COPY_PASSWORD("jpass.menu.copy_password_action", new AbstractMenuAction("Copy Password", MessageDialog.getIcon("keyring"), KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK)) {
+    COPY_PASSWORD("jpass.menu.copy_password_action", new AbstractMenuAction("Copy Password", MessageDialog.getIcon("keyring"), KeyStroke.getKeyStroke(KeyEvent.VK_C, JPass.MASK)) {
         private static final long serialVersionUID = 2719136744084762599L;
         @Override
         public void actionPerformed(ActionEvent ev) {
@@ -234,7 +238,7 @@ public enum MenuActionType {
         }
     }),
 
-    GOTO("jpass.menu.goto_action", new AbstractMenuAction("Go To", MessageDialog.getIcon("url"), KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK)) {
+    GOTO("jpass.menu.goto_action", new AbstractMenuAction("Go To", MessageDialog.getIcon("url"), KeyStroke.getKeyStroke(KeyEvent.VK_G, JPass.MASK)) {
 
 		private static final long serialVersionUID = 6107973876749922626L;
 
@@ -249,7 +253,7 @@ public enum MenuActionType {
         }
     }),
     
-    CLEAR_CLIPBOARD("jpass.menu.clear_clipboard_action", new AbstractMenuAction("Clear Clipboard", MessageDialog.getIcon("clear"), KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK)) {
+    CLEAR_CLIPBOARD("jpass.menu.clear_clipboard_action", new AbstractMenuAction("Clear Clipboard", MessageDialog.getIcon("clear"), KeyStroke.getKeyStroke(KeyEvent.VK_X, JPass.MASK)) {
         private static final long serialVersionUID = -7621614933053924326L;
         @Override
         public void actionPerformed(ActionEvent ev) {

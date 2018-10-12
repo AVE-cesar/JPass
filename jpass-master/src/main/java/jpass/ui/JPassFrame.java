@@ -216,6 +216,7 @@ public final class JPassFrame extends JFrame {
         	// on recherche un fichier .jpass au même endroit
         	LOGGER.info("on précharge le premier fichier jpass situé dans le même répertoire.");
         	try {
+        		LOGGER.info("Ce fichier est: " + FileUtils.findJPassFile());
 				FileHelper.doOpenFile(FileUtils.findJPassFile(), this);
 			} catch (IOException e) {
 				LOGGER.log(Level.WARNING, "", e);
