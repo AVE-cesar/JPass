@@ -66,9 +66,12 @@ public final class GeneratePasswordDialog extends JDialog implements ActionListe
     private static final String SYMBOLS = "!\"#$%&'()*+,-./:;<=>?@[\\]^_{|}~";
 
     /** Options for password generation. */
+    /**
+     * Le I majuscule et le l minuscule sont enlévés car avec certaines polices, il est difficile de les distinguer.
+     */
     private static final String[][] passwordOptions = {
-        { "Upper case letters (A-Z)", "ABCDEFGHIJKLMNOPQRSTUVWXYZ" },
-        { "Lower case letters (a-z)", "abcdefghijklmnopqrstuvwxyz" },
+        { "Upper case letters (A-Z)", "ABCDEFGHJKLMNOPQRSTUVWXYZ" },
+        { "Lower case letters (a-z)", "abcdefghijkmnopqrstuvwxyz" },
         { "Numbers (0-9)", "0123456789" },
     };
 

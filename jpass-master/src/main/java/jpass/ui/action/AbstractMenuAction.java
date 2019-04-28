@@ -49,11 +49,12 @@ public abstract class AbstractMenuAction extends AbstractAction {
      * @param icon icon of action
      * @param accelerator accelerator key
      */
-    public AbstractMenuAction(String text, Icon icon, KeyStroke accelerator) {
+    public AbstractMenuAction(String text, Icon icon, KeyStroke accelerator, boolean enabled) {
         super(text, icon);
         putValue(SHORT_DESCRIPTION, text);
         if (accelerator != null) {
             putValue(ACCELERATOR_KEY, accelerator);
         }
+        setEnabled(enabled);
     }
 }

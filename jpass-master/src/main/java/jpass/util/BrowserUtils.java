@@ -20,7 +20,10 @@ public class BrowserUtils {
 				// cmd = 'rundll32 url.dll,FileProtocolHandler http://...'
 				cmd = WIN_PATH + " " + WIN_FLAG + " " + url;
 				Process p = Runtime.getRuntime().exec(cmd);
+			} else if (isMacPlatform()) {
+				openUrlInBrowserForMac(url);
 			} else {
+			
 				// Under Unix, Netscape has to be running for the "-remote"
 				// command to work. So, we try sending the command and
 				// check for an exit value. If the exit command is 0,
@@ -47,7 +50,7 @@ public class BrowserUtils {
 		} catch (IOException x) {
 			// couldn't exec browser
 			System.err.println("Could not invoke browser, command=" + cmd);
-			System.err.println("Caught: " + x);
+			x.printStackTrace();
 		}
 	}
 
@@ -65,7 +68,27 @@ public class BrowserUtils {
 			return false;
 
 	}
+	
+	public static boolean isMacPlatform() {
+		String os = System.getProperty("os.name").toUpperCase();
+		if (os != null && os.startsWith("MAC OS"))
+			return true;
+		else
+			return false;
 
+	}
+
+	private static void openUrlInBrowserForMac(String url) {
+		
+	    Runtime runtime = Runtime.getRuntime();
+	    String[] args = { "osascript", "-e", "open location \"" + url + "\"" };
+	    try {
+	        Process process = runtime.exec(args);
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
+	}
+	
 	// Used to identify the windows platform.
 	private static final String WIN_ID = "Windows";
 	// The default system browser under windows.

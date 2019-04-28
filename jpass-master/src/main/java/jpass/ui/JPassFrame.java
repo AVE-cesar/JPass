@@ -31,29 +31,39 @@ package jpass.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.datatransfer.FlavorEvent;
+import java.awt.datatransfer.FlavorListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.DefaultListModel;
+import javax.swing.InputMap;
 import javax.swing.JFrame;
-import javax.swing.JList;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
+import javax.swing.RowFilter;
+import javax.swing.UIManager;
 import javax.swing.WindowConstants;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.TableRowSorter;
+import javax.swing.text.DefaultEditorKit;
 
+import jpass.JPass;
 import jpass.data.DataModel;
 import jpass.ui.action.Callback;
 import jpass.ui.action.CloseListener;
-import jpass.ui.action.KeyboadListener;
-import jpass.ui.action.ListListener;
 import jpass.ui.action.MenuActionType;
 import jpass.ui.helper.EntryHelper;
 import jpass.ui.helper.FileHelper;
@@ -66,293 +76,393 @@ import jpass.util.FileUtils;
  *
  */
 public final class JPassFrame extends JFrame {
-    private static final long serialVersionUID = -4114209356464342368L;
+	private static final long serialVersionUID = -4114209356464342368L;
 
-    private static final Logger LOGGER = Logger.getLogger(JPassFrame.class.getName());
-    
-    private static volatile JPassFrame INSTANCE;
+	private static final Logger LOGGER = Logger.getLogger(JPassFrame.class.getName());
 
-    public static final String PROGRAM_NAME = "JPass Password Manager";
-    public static final String PROGRAM_VERSION = "1.0.1";
+	private static volatile JPassFrame INSTANCE;
 
-    private final JPopupMenu popup;
-    private final JMenuBar menuBar;
-    private final JMenu fileMenu;
-    private final JMenu editMenu;
-    private final JMenu toolsMenu;
-    private final JMenu helpMenu;
-    private final JToolBar toolBar;
-    private final JScrollPane scrollPane;
-    private final JList entryTitleList;
-    private final DefaultListModel entryTitleListModel;
-    private final DataModel model = DataModel.getInstance();
-    private final StatusPanel statusPanel;
-    private volatile boolean processing = false;
+	public static final String PROGRAM_NAME = "JPass Password Manager";
+	public static final String PROGRAM_VERSION = "1.0.6";
 
-    /**
-     * Création de la fenêtre principale en passant les paramètres de la ligne de commmande.
-     * @param args
-     */
-    public JPassFrame(String[] args) {
-        try {
-            setIconImage(MessageDialog.getIcon("lock").getImage());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+	/**
+	 * Popup menu sur la table.
+	 */
+	private JPopupMenu popup = null;
 
-        this.toolBar = new JToolBar();
-        this.toolBar.setFloatable(false);
-        this.toolBar.add(MenuActionType.NEW_FILE.getAction());
-        this.toolBar.add(MenuActionType.OPEN_FILE.getAction());
-        this.toolBar.add(MenuActionType.SAVE_FILE.getAction());
-        this.toolBar.addSeparator();
-        this.toolBar.add(MenuActionType.FIND_ENTRY.getAction());
-        this.toolBar.add(MenuActionType.ADD_ENTRY.getAction());
-        this.toolBar.add(MenuActionType.EDIT_ENTRY.getAction());
-        this.toolBar.add(MenuActionType.DUPLICATE_ENTRY.getAction());
-        this.toolBar.add(MenuActionType.DELETE_ENTRY.getAction());
-        this.toolBar.addSeparator();
-        this.toolBar.add(MenuActionType.COPY_URL.getAction());
-        this.toolBar.add(MenuActionType.COPY_USER.getAction());
-        this.toolBar.add(MenuActionType.COPY_PASSWORD.getAction());
-        this.toolBar.add(MenuActionType.CLEAR_CLIPBOARD.getAction());
-        this.toolBar.addSeparator();
-        this.toolBar.add(MenuActionType.ABOUT.getAction());
-        this.toolBar.add(MenuActionType.EXIT.getAction());
+	private JMenuBar menuBar;
+	private JMenu fileMenu = null;
+	private JMenu editMenu = null;
+	private JMenu toolsMenu = null;
+	private JMenu helpMenu = null;
+	private JToolBar toolBar = null;
+	private final JScrollPane scrollPane;
 
-        this.menuBar = new JMenuBar();
+	private JTable table;
+	private TableRowSorter<DataModel> sorter;
 
-        this.fileMenu = new JMenu("File");
-        this.fileMenu.setMnemonic(KeyEvent.VK_F);
-        this.fileMenu.add(MenuActionType.NEW_FILE.getAction());
-        this.fileMenu.add(MenuActionType.OPEN_FILE.getAction());
-        this.fileMenu.add(MenuActionType.SAVE_FILE.getAction());
-        this.fileMenu.add(MenuActionType.SAVE_AS_FILE.getAction());
-        this.fileMenu.addSeparator();
-        this.fileMenu.add(MenuActionType.EXPORT_XML.getAction());
-        this.fileMenu.add(MenuActionType.IMPORT_XML.getAction());
-        this.fileMenu.addSeparator();
-        this.fileMenu.add(MenuActionType.CHANGE_PASSWORD.getAction());
-        this.fileMenu.addSeparator();
-        this.fileMenu.add(MenuActionType.EXIT.getAction());
-        this.menuBar.add(this.fileMenu);
+	/**
+	 * Zone pour filter les entrées du tableau.
+	 */
+	private JTextField filterText;
 
-        this.editMenu = new JMenu("Edit");
-        this.editMenu.setMnemonic(KeyEvent.VK_E);
-        this.editMenu.add(MenuActionType.FIND_ENTRY.getAction());
-        this.editMenu.add(MenuActionType.ADD_ENTRY.getAction());
-        this.editMenu.add(MenuActionType.EDIT_ENTRY.getAction());
-        this.editMenu.add(MenuActionType.DUPLICATE_ENTRY.getAction());
-        this.editMenu.add(MenuActionType.DELETE_ENTRY.getAction());
-        this.editMenu.addSeparator();
-        this.editMenu.add(MenuActionType.COPY_URL.getAction());
-        this.editMenu.add(MenuActionType.COPY_USER.getAction());
-        this.editMenu.add(MenuActionType.COPY_PASSWORD.getAction());
-        this.menuBar.add(this.editMenu);
+	private final DataModel model = DataModel.getInstance();
+	private final StatusPanel statusPanel;
+	private volatile boolean processing = false;
 
-        this.toolsMenu = new JMenu("Tools");
-        this.toolsMenu.setMnemonic(KeyEvent.VK_T);
-        this.toolsMenu.add(MenuActionType.GENERATE_PASSWORD.getAction());
-        this.toolsMenu.add(MenuActionType.CLEAR_CLIPBOARD.getAction());
-        this.menuBar.add(this.toolsMenu);
+	/**
+	 * Création de la fenêtre principale en passant les paramètres de la ligne de
+	 * commmande.
+	 * 
+	 * @param args
+	 */
+	public JPassFrame(String[] args) {
+		try {
+			setIconImage(MessageDialog.getIcon("lock").getImage());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-        this.helpMenu = new JMenu("Help");
-        this.helpMenu.setMnemonic(KeyEvent.VK_H);
-        this.helpMenu.add(MenuActionType.LICENSE.getAction());
-        this.helpMenu.addSeparator();
-        this.helpMenu.add(MenuActionType.ABOUT.getAction());
-        this.menuBar.add(this.helpMenu);
+		addClipboardListener();
+		
+		fillToolbar();
 
-        this.popup = new JPopupMenu();
-        this.popup.add(MenuActionType.ADD_ENTRY.getAction());
-        this.popup.add(MenuActionType.EDIT_ENTRY.getAction());
-        this.popup.add(MenuActionType.DUPLICATE_ENTRY.getAction());
-        this.popup.add(MenuActionType.DELETE_ENTRY.getAction());
-        this.popup.addSeparator();
-        this.popup.add(MenuActionType.COPY_URL.getAction());
-        this.popup.add(MenuActionType.COPY_USER.getAction());
-        this.popup.add(MenuActionType.COPY_PASSWORD.getAction());
-        this.popup.add(MenuActionType.GOTO.getAction());
+		this.menuBar = new JMenuBar();
 
-        this.entryTitleListModel = new DefaultListModel();
-        this.entryTitleList = new JList(this.entryTitleListModel);
-        this.entryTitleList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		fillFileMenu();
+		this.menuBar.add(this.fileMenu);
+
+		fillEditMenu();
+		this.menuBar.add(this.editMenu);
+
+		fillToolsMenu();
+		this.menuBar.add(this.toolsMenu);
+
+		fillHelpMenu();
+		this.menuBar.add(this.helpMenu);
+
+		fillPopup();
+
+		table = new JTable(model);
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		table.addMouseListener(new MyJTableMouseListener());
+		table.setAutoCreateRowSorter(true);
+		table.setFillsViewportHeight(true);
+		table.getTableHeader().setToolTipText("Click to sort; Shift-Click to sort in reverse order");
+		// tri sur la première colonne par défaut
+		sorter = new TableRowSorter<DataModel>(model);
+        table.setRowSorter(sorter);
+		table.getRowSorter().toggleSortOrder(0);
+		// sets the popup menu for the table
+		table.setComponentPopupMenu(popup);
+		table.getColumnModel().getColumn(DataModel.TITLE_COLUMN).setCellRenderer(new TitleCellRenderer());
+
+		this.scrollPane = new JScrollPane(this.table);
+
+		MenuActionType.bindAllActions(this.table);
+
+		// Create a separate form for filterText and statusText
+		JPanel panel = new JPanel(new BorderLayout());
+        panel.add(new JLabel("Specify a word to match:"),
+                BorderLayout.WEST);
         
-        this.entryTitleList.addMouseListener(new ListListener());
-        this.entryTitleList.addKeyListener(new KeyboadListener());
-        this.scrollPane = new JScrollPane(this.entryTitleList);
-        MenuActionType.bindAllActions(this.entryTitleList);
+		filterText = new JTextField();
+		// Whenever filterText changes, invoke newFilter.
+		filterText.getDocument().addDocumentListener(new DocumentListener() {
+			public void changedUpdate(DocumentEvent e) {
+				newFilter();
+			}
 
-        this.statusPanel = new StatusPanel();
+			public void insertUpdate(DocumentEvent e) {
+				newFilter();
+			}
 
-        refreshAll();
+			public void removeUpdate(DocumentEvent e) {
+				newFilter();
+			}
+		});
+		panel.add(filterText, BorderLayout.CENTER);
 
-        getContentPane().add(this.toolBar, BorderLayout.NORTH);
-        getContentPane().add(this.scrollPane, BorderLayout.CENTER);
-        getContentPane().add(this.statusPanel, BorderLayout.SOUTH);
+		this.statusPanel = new StatusPanel();
+		panel.add(this.statusPanel, BorderLayout.SOUTH);
 
-        setJMenuBar(this.menuBar);
-        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        int width = 500;
-        // largeur de la fenêtre
-        if (args.length >= 2) {
-        	width = Integer.parseInt(args[1]);
-        }
-        int height = 1000;
-        // hauteur de la fenêtre
-        if (args.length >= 3) {
-        	height = Integer.parseInt(args[2]);
-        }
-        setSize(width, height);
-        setMinimumSize(new Dimension(width, height));
-        addWindowListener(new CloseListener());
-        setLocationRelativeTo(null);
-        setVisible(true);
-        
-        if (args.length >= 1) {
-        	LOGGER.info("on précharge le fichier passé en ligne de commande.");
-        	FileHelper.doOpenFile(args[0], this);
-        } else {
-        	// on recherche un fichier .jpass au même endroit
-        	LOGGER.info("on précharge le premier fichier jpass situé dans le même répertoire.");
-        	try {
-        		LOGGER.info("Ce fichier est: " + FileUtils.findJPassFile());
+		refreshAll();
+
+		getContentPane().add(this.toolBar, BorderLayout.NORTH);
+		getContentPane().add(this.scrollPane, BorderLayout.CENTER);
+		getContentPane().add(panel, BorderLayout.SOUTH);
+
+		setJMenuBar(this.menuBar);
+		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		int width = 1000;
+		// largeur de la fenêtre
+		if (args.length >= 2) {
+			width = Integer.parseInt(args[1]);
+		}
+		int height = 1000;
+		// hauteur de la fenêtre
+		if (args.length >= 3) {
+			height = Integer.parseInt(args[2]);
+		}
+		setSize(width, height);
+		setMinimumSize(new Dimension(width, height));
+		addWindowListener(new CloseListener());
+		setLocationRelativeTo(null);
+		setVisible(true);
+
+		if (args.length >= 1) {
+			LOGGER.info("on précharge le fichier passé en ligne de commande: " + args[0]);
+			FileHelper.doOpenFile(args[0], this);
+		} else {
+			// on recherche un fichier .jpass au même endroit
+			LOGGER.info("on précharge le premier fichier jpass situé dans le même répertoire.");
+			try {
+				LOGGER.info("Ce fichier est: " + FileUtils.findJPassFile());
 				FileHelper.doOpenFile(FileUtils.findJPassFile(), this);
 			} catch (IOException e) {
 				LOGGER.log(Level.WARNING, "", e);
 			}
-        } 
-        	
-        // set focus to the list for easier keyboard navigation
-        this.entryTitleList.requestFocusInWindow();
-    }
+		}
 
-    public static JPassFrame getInstance() {
-        return getInstance(null);
-    }
+		// set focus to the list for easier keyboard navigation
+		this.table.requestFocusInWindow();
+	}
 
-    public static JPassFrame getInstance(String[] args) {
-        if (INSTANCE == null) {
-            synchronized (JPassFrame.class) {
-                if (INSTANCE == null) {
-                    INSTANCE = new JPassFrame(args);
-                }
-            }
-        }
-        return INSTANCE;
-    }
+	private void fillPopup() {
+		this.popup = new JPopupMenu();
+		this.popup.add(MenuActionType.ADD_ENTRY.getAction());
+		this.popup.add(MenuActionType.EDIT_ENTRY.getAction());
+		this.popup.add(MenuActionType.DUPLICATE_ENTRY.getAction());
+		this.popup.add(MenuActionType.DELETE_ENTRY.getAction());
+		this.popup.addSeparator();
+		this.popup.add(MenuActionType.COPY_URL.getAction());
+		this.popup.add(MenuActionType.COPY_USER.getAction());
+		this.popup.add(MenuActionType.COPY_PASSWORD.getAction());
+		this.popup.add(MenuActionType.GOTO.getAction());
+		this.popup.addPopupMenuListener(new MyPopupMenuListener());
+	}
 
-    /**
-     * Gets the entry title list.
-     *
-     * @return entry title list
-     */
-    public JList getEntryTitleList() {
-        return this.entryTitleList;
-    }
+	private void fillHelpMenu() {
+		this.helpMenu = new JMenu("Help");
+		this.helpMenu.setMnemonic(KeyEvent.VK_H);
+		this.helpMenu.add(MenuActionType.LICENSE.getAction());
+		this.helpMenu.addSeparator();
+		this.helpMenu.add(MenuActionType.ABOUT.getAction());
+	}
 
-    /**
-     * Gets the data model of this frame.
-     *
-     * @return data model
-     */
-    public DataModel getModel() {
-        return this.model;
-    }
+	private void fillToolsMenu() {
+		this.toolsMenu = new JMenu("Tools");
+		this.toolsMenu.setMnemonic(KeyEvent.VK_T);
+		this.toolsMenu.add(MenuActionType.GENERATE_PASSWORD.getAction());
+		this.toolsMenu.add(MenuActionType.CLEAR_CLIPBOARD.getAction());
+	}
 
-    /**
-     * Refresh frame title based on data model.
-     */
-    public void refreshFrameTitle() {
-        setTitle((getModel().isModified() ? "*" : "")
-                + (getModel().getFileName() == null ? "Untitled" : getModel()
-                        .getFileName()) + " - " + PROGRAM_NAME);
-    }
+	private void fillEditMenu() {
+		this.editMenu = new JMenu("Edit");
+		this.editMenu.setMnemonic(KeyEvent.VK_E);
+		this.editMenu.add(MenuActionType.ADD_ENTRY.getAction());
+		
+		this.editMenu.add(MenuActionType.EDIT_ENTRY.getAction());
+		this.editMenu.add(MenuActionType.DUPLICATE_ENTRY.getAction());
+		this.editMenu.add(MenuActionType.DELETE_ENTRY.getAction());
+		this.editMenu.addSeparator();
+		this.editMenu.add(MenuActionType.COPY_URL.getAction());
+		this.editMenu.add(MenuActionType.COPY_USER.getAction());
+		this.editMenu.add(MenuActionType.COPY_PASSWORD.getAction());
+	}
 
-    /**
-     * Refresh the entry titles based on data model.
-     *
-     * @param selectTitle title to select, or {@code null} if nothing to select
-     */
-    public void refreshEntryTitleList(String selectTitle) {
-        this.entryTitleListModel.clear();
-        List<String> titleList = this.model.getListOfTitles();
-        Collections.sort(titleList, String.CASE_INSENSITIVE_ORDER);
-        for (String title : titleList) {
-            this.entryTitleListModel.addElement(title);
-        }
-        if (selectTitle != null) {
-            this.entryTitleList.setSelectedValue(selectTitle, true);
-        }
-        this.statusPanel.setText("Entries count: " + titleList.size());
-    }
+	private void fillFileMenu() {
+		this.fileMenu = new JMenu("File");
+		this.fileMenu.setMnemonic(KeyEvent.VK_F);
+		this.fileMenu.add(MenuActionType.NEW_FILE.getAction());
+		this.fileMenu.add(MenuActionType.OPEN_FILE.getAction());
+		this.fileMenu.add(MenuActionType.SAVE_FILE.getAction());
+		this.fileMenu.add(MenuActionType.SAVE_AS_FILE.getAction());
+		this.fileMenu.addSeparator();
+		this.fileMenu.add(MenuActionType.EXPORT_XML.getAction());
+		this.fileMenu.add(MenuActionType.IMPORT_XML.getAction());
+		this.fileMenu.addSeparator();
+		this.fileMenu.add(MenuActionType.CHANGE_PASSWORD.getAction());
+		this.fileMenu.addSeparator();
+		this.fileMenu.add(MenuActionType.EXIT.getAction());
+	}
 
-    /**
-     * Refresh frame title and entry list.
-     */
-    public void refreshAll() {
-        refreshFrameTitle();
-        refreshEntryTitleList(null);
-    }
+	private void fillToolbar() {
+		this.toolBar = new JToolBar();
+		this.toolBar.setFloatable(false);
+		this.toolBar.add(MenuActionType.NEW_FILE.getAction());
+		this.toolBar.add(MenuActionType.OPEN_FILE.getAction());
+		this.toolBar.add(MenuActionType.SAVE_FILE.getAction());
+		this.toolBar.addSeparator();
+		this.toolBar.add(MenuActionType.ADD_ENTRY.getAction());
+		this.toolBar.add(MenuActionType.EDIT_ENTRY.getAction());
+		this.toolBar.add(MenuActionType.DUPLICATE_ENTRY.getAction());
+		this.toolBar.add(MenuActionType.DELETE_ENTRY.getAction());
+		this.toolBar.addSeparator();
+		this.toolBar.add(MenuActionType.COPY_URL.getAction());
+		this.toolBar.add(MenuActionType.COPY_USER.getAction());
+		this.toolBar.add(MenuActionType.COPY_PASSWORD.getAction());
+		this.toolBar.add(MenuActionType.CLEAR_CLIPBOARD.getAction());
+		this.toolBar.addSeparator();
+		this.toolBar.add(MenuActionType.ABOUT.getAction());
+		this.toolBar.add(MenuActionType.EXIT.getAction());
+	}
 
-    /**
-     * Exits the application.
-     */
-    public void exitFrame() {
-        // Clear clipboard on exit
-        EntryHelper.copyEntryField(this, null);
+	public static JPassFrame getInstance() {
+		return getInstance(null);
+	}
 
-        if (this.processing) {
-            return;
-        }
-        if (this.model.isModified()) {
-            int option = MessageDialog.showQuestionMessage(
-                    this,
-                    "The current file has been modified.\n" +
-                    "Do you want to save the changes before closing?",
-                    MessageDialog.YES_NO_CANCEL_OPTION);
-            if (option == MessageDialog.YES_OPTION) {
-                FileHelper.saveFile(this, false, new Callback() {
-                    @Override
-                    public void call(boolean result) {
-                        if (result) {
-                            System.exit(0);
-                        }
-                    }
-                });
-                return;
-            } else if (option != MessageDialog.NO_OPTION) {
-                return;
-            }
-        }
-        System.exit(0);
-    }
+	public static JPassFrame getInstance(String[] args) {
+		if (INSTANCE == null) {
+			synchronized (JPassFrame.class) {
+				if (INSTANCE == null) {
+					INSTANCE = new JPassFrame(args);
+				}
+			}
+		}
+		return INSTANCE;
+	}
 
-    public JPopupMenu getPopup() {
-        return this.popup;
-    }
+	public JTable getEntryTable() {
+		return this.table;
+	}
 
-    /**
-     * Sets the processing state of this frame.
-     *
-     * @param processing processing state
-     */
-    public void setProcessing(boolean processing) {
-        this.processing = processing;
-        for (MenuActionType actionType : MenuActionType.values()) {
-            actionType.getAction().setEnabled(!processing);
-        }
+	public JPopupMenu getPopupMenu() {
+		return this.popup;
+	}
 
-        this.entryTitleList.setEnabled(!processing);
-        this.statusPanel.setProcessing(processing);
-    }
+	/**
+	 * Gets the data model of this frame.
+	 *
+	 * @return data model
+	 */
+	public DataModel getModel() {
+		return this.model;
+	}
 
-    /**
-     * Gets the processing state of this frame.
-     *
-     * @return processing state
-     */
-    public boolean isProcessing() {
-        return this.processing;
-    }
+	/**
+	 * Refresh frame title based on data model.
+	 */
+	public void refreshFrameTitle() {
+		setTitle((getModel().isModified() ? "*" : "")
+				+ (getModel().getFileName() == null ? "Untitled" : getModel().getFileName()) + " - " + PROGRAM_NAME);
+	}
+
+	/**
+	 * Refresh the entry titles based on data model.
+	 *
+	 * @param selectTitle
+	 *            title to select, or {@code null} if nothing to select
+	 */
+	public void refreshEntryTitleList(String selectTitle) {
+
+		this.getModel().fireTableDataChanged();
+
+		if (selectTitle != null) {
+			// FIXMEthis.entryTitleList.setSelectedValue(selectTitle, true);
+		}
+		this.statusPanel.setText("Entries count: " + this.getModel().getRowCount());
+	}
+
+	/**
+	 * Refresh frame title and entry list.
+	 */
+	public void refreshAll() {
+		refreshFrameTitle();
+		refreshEntryTitleList(null);
+	}
+
+	/**
+	 * Exits the application.
+	 */
+	public void exitFrame() {
+		// Clear clipboard on exit
+		EntryHelper.copyEntryField(this, null);
+
+		if (this.processing) {
+			return;
+		}
+		if (this.model.isModified()) {
+			int option = MessageDialog.showQuestionMessage(this,
+					"The current file has been modified.\n" + "Do you want to save the changes before closing?",
+					MessageDialog.YES_NO_CANCEL_OPTION);
+			if (option == MessageDialog.YES_OPTION) {
+				FileHelper.saveFile(this, false, new Callback() {
+					@Override
+					public void call(boolean result) {
+						if (result) {
+							System.exit(0);
+						}
+					}
+				});
+				return;
+			} else if (option != MessageDialog.NO_OPTION) {
+				return;
+			}
+		}
+		System.exit(0);
+	}
+
+	public JPopupMenu getPopup() {
+		return this.popup;
+	}
+
+	/**
+	 * Sets the processing state of this frame.
+	 *
+	 * @param processing
+	 *            processing state
+	 */
+	public void setProcessing(boolean processing) {
+		this.processing = processing;
+		for (MenuActionType actionType : MenuActionType.values()) {
+			//actionType.getAction().setEnabled(!processing);
+		}
+
+		this.table.setEnabled(!processing);
+		this.statusPanel.setProcessing(processing);
+	}
+
+	/**
+	 * Gets the processing state of this frame.
+	 *
+	 * @return processing state
+	 */
+	public boolean isProcessing() {
+		return this.processing;
+	}
+
+	/**
+	 * Update the row filter regular expression from the expression in the text box.
+	 */
+	private void newFilter() {
+		RowFilter<DataModel, Object> rf = null;
+		// If current expression doesn't parse, don't update.
+		try {
+			// le préfixe permet d'être insensible à la casse
+			rf = RowFilter.regexFilter("(?i)" + filterText.getText(), 0);
+		} catch (java.util.regex.PatternSyntaxException e) {
+			return;
+		}
+		sorter.setRowFilter(rf);
+	}
+
+	private void addClipboardListener() {
+		boolean isMacOs = (System.getProperty("os.name").toLowerCase().contains("mac"));
+		if (isMacOs) {
+		    // Stollen from http://stackoverflow.com/questions/7252749/how-to-use-command-c-command-v-shortcut-in-mac-to-copy-paste-text#answer-7253059
+		    InputMap im = (InputMap) UIManager.get("TextField.focusInputMap");
+		    im.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, JPass.MASK), DefaultEditorKit.copyAction);
+		    im.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, JPass.MASK), DefaultEditorKit.pasteAction);
+		    im.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, JPass.MASK), DefaultEditorKit.cutAction);
+		}
+		
+		Toolkit.getDefaultToolkit().getSystemClipboard().addFlavorListener(new FlavorListener() {
+			   @Override 
+			   public void flavorsChanged(FlavorEvent e) {
+	
+			      System.out.println("ClipBoard UPDATED: " + e.getSource() + " " + e.toString());
+			   } 
+			}); 
+	}
 }

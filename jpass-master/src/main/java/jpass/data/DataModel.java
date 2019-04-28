@@ -32,6 +32,8 @@ package jpass.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.table.AbstractTableModel;
+
 import jpass.xml.bind.Entries;
 import jpass.xml.bind.Entry;
 
@@ -41,9 +43,17 @@ import jpass.xml.bind.Entry;
  * @author Gabor_Bata
  *
  */
-public class DataModel {
+public class DataModel extends AbstractTableModel {
     private static volatile DataModel INSTANCE;
 
+    public static int TITLE_COLUMN = 0;
+    public static int URL_COLUMN = 1;
+    public static int USER_COLUMN = 2;
+    public static int PASSWORD_COLUMN = 3;
+    public static int NOTES_COLUMN = 4;
+    
+    private String[] columnNames = new String[] {"Title", "URL", "Username", "Password", "Notes"};
+    
     private Entries entries = new Entries();
     private String fileName = null;
     private transient byte[] password = null;
@@ -84,7 +94,9 @@ public class DataModel {
      * @param entries entries
      */
     public final void setEntries(final Entries entries) {
+    	System.out.println("On fixe les entrées du model");
         this.entries = entries;
+        this.fireTableDataChanged();
     }
 
     /**
@@ -161,6 +173,7 @@ public class DataModel {
      * @return entry index
      */
     public int getEntryIndexByTitle(String title) {
+    	System.out.println("on recherche: "  + title);
         return getListOfTitles().indexOf(title);
     }
 
@@ -171,7 +184,10 @@ public class DataModel {
      * @return entry
      */
     public Entry getEntryByTitle(String title) {
-        return this.entries.getEntry().get(getEntryIndexByTitle(title));
+    	int index = getEntryIndexByTitle(title);
+    	if (index >= 0) {
+        return this.entries.getEntry().get(index);
+    	} else return null;
     }
     
     public Entry findEntry(String title) {
@@ -197,4 +213,47 @@ public class DataModel {
     	}
     	if (founded) return index; else return -1;
     }
+
+	@Override
+	public int getRowCount() {
+		return this.entries.getEntry().size();
+	}
+
+	@Override
+	public int getColumnCount() {
+		return this.columnNames.length;
+	}
+
+	@Override
+	public Object getValueAt(int rowIndex, int columnIndex) {
+		/*if (columnIndex ==0) {
+			System.out.println("appel de getValueAt:" + rowIndex + ", " + columnIndex);
+		
+			System.out.println("Le model contient: " + this.entries.getEntry().size());
+		}*/
+		String value = null;
+		
+		if (rowIndex < 0 && rowIndex > getRowCount()-1) return null;
+		if (columnIndex < 0 && columnIndex > getColumnCount()-1) return null;
+		
+		if (columnIndex == TITLE_COLUMN) {
+			value = this.entries.getEntry().get(rowIndex).getTitle();
+		} else if (columnIndex == URL_COLUMN) {
+			value = this.entries.getEntry().get(rowIndex).getUrl();
+		} else if (columnIndex == USER_COLUMN) {
+			value = this.entries.getEntry().get(rowIndex).getUser();
+		} else if (columnIndex == PASSWORD_COLUMN) {
+			value = this.entries.getEntry().get(rowIndex).getPassword();
+		} else if (columnIndex == NOTES_COLUMN) {
+			value = this.entries.getEntry().get(rowIndex).getNotes();
+		} else {
+		}
+		//System.out.println("Value:" + value);
+		return value;
+	}
+
+	@Override
+	public String getColumnName(int columnIndex) {
+		return this.columnNames[columnIndex];
+	}
 }

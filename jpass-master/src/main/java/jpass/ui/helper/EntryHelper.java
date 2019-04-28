@@ -30,9 +30,11 @@
 package jpass.ui.helper;
 
 import javax.swing.JOptionPane;
+import javax.swing.table.TableModel;
 
 import jpass.util.BrowserUtils;
 import jpass.util.ClipboardUtils;
+import jpass.data.DataModel;
 import jpass.ui.EntryDialog;
 import jpass.ui.JPassFrame;
 import jpass.ui.MessageDialog;
@@ -56,14 +58,16 @@ public final class EntryHelper {
      * @param parent parent component
      */
     public static void deleteEntry(JPassFrame parent) {
-        if (parent.getEntryTitleList().getSelectedIndex() == -1) {
-            MessageDialog.showWarningMessage(parent, "Please select an entry.");
-            return;
-        }
+    	int selectedRow = JPassFrame.getInstance().getEntryTable().getSelectedRow();
+    	int convertedRow = JPassFrame.getInstance().getEntryTable().convertRowIndexToModel(selectedRow);
+    	
+		String title = getTitle(convertedRow);
+		
+		showWarning(parent, selectedRow);
         int option = MessageDialog.showQuestionMessage(parent, "Do you really want to delete this entry?",
                 MessageDialog.YES_NO_OPTION);
         if (option == MessageDialog.YES_OPTION) {
-            String title = (String) parent.getEntryTitleList().getSelectedValue();
+            
             parent.getModel().getEntries().getEntry().remove(parent.getModel().getEntryByTitle(title));
             parent.getModel().setModified(true);
             parent.refreshFrameTitle();
@@ -77,11 +81,13 @@ public final class EntryHelper {
      * @param parent parent component
      */
     public static void duplicateEntry(JPassFrame parent) {
-        if (parent.getEntryTitleList().getSelectedIndex() == -1) {
-            MessageDialog.showWarningMessage(parent, "Please select an entry.");
-            return;
-        }
-        String title = (String) parent.getEntryTitleList().getSelectedValue();
+    	int selectedRow = JPassFrame.getInstance().getEntryTable().getSelectedRow();
+    	int convertedRow = JPassFrame.getInstance().getEntryTable().convertRowIndexToModel(selectedRow);
+    	
+		String title = getTitle(convertedRow);
+		
+		showWarning(parent, selectedRow);
+        
         Entry oldEntry = parent.getModel().getEntryByTitle(title);
         EntryDialog ed = new EntryDialog(parent, "Duplicate Entry", oldEntry, true);
         if (ed.getFormData() != null) {
@@ -97,12 +103,14 @@ public final class EntryHelper {
      *
      * @param parent parent component
      */
-    public static void editEntry(JPassFrame parent) {
-        if (parent.getEntryTitleList().getSelectedIndex() == -1) {
-            MessageDialog.showWarningMessage(parent, "Please select an entry.");
-            return;
-        }
-        String title = (String) parent.getEntryTitleList().getSelectedValue();
+    public static void editEntry(JPassFrame parent) {  	
+    	int selectedRow = JPassFrame.getInstance().getEntryTable().getSelectedRow();
+    	int convertedRow = JPassFrame.getInstance().getEntryTable().convertRowIndexToModel(selectedRow);
+    	
+		String title = getTitle(convertedRow);
+		
+		showWarning(parent, convertedRow);
+        
         Entry oldEntry = parent.getModel().getEntryByTitle(title);
         EntryDialog ed = new EntryDialog(parent, "Edit Entry", oldEntry, false);
         if (ed.getFormData() != null) {
@@ -112,28 +120,6 @@ public final class EntryHelper {
             parent.refreshFrameTitle();
             parent.refreshEntryTitleList(ed.getFormData().getTitle());
         }
-    }
-
-    /**
-     * finds an entry.
-     *
-     * @param parent parent component
-     */
-    public static void findEntry(JPassFrame parent) {
-    	String s = (String)JOptionPane.showInputDialog(
-                parent,
-                "Find:",
-                "Find an entry",
-                JOptionPane.PLAIN_MESSAGE);
-    	
-    	//If a string was returned, say so.
-    	if ((s != null) && (s.length() > 0)) {
-    	    // il faut recherche dans le model
-    		int index = parent.getModel().findEntryIndex(s);
-    		
-    		System.out.println("on a trouvé: " + index);
-    		parent.getEntryTitleList().setSelectedIndex(index);
-    	}
     }
     
     /**
@@ -158,11 +144,12 @@ public final class EntryHelper {
      * @return the entry or null
      */
     public static Entry getSelectedEntry(JPassFrame parent) {
-        if (parent.getEntryTitleList().getSelectedIndex() == -1) {
-            MessageDialog.showWarningMessage(parent, "Please select an entry.");
-            return null;
-        }
-        return parent.getModel().getEntryByTitle((String) parent.getEntryTitleList().getSelectedValue());
+    	int selectedRow = JPassFrame.getInstance().getEntryTable().getSelectedRow();
+    	int convertedRow = JPassFrame.getInstance().getEntryTable().convertRowIndexToModel(selectedRow);
+    	
+    	showWarning(parent, selectedRow);
+    	String title = getTitle(convertedRow);
+        return parent.getModel().getEntryByTitle(title);
     }
 
     /**
@@ -186,5 +173,18 @@ public final class EntryHelper {
         } catch (Exception e) {
             MessageDialog.showErrorMessage(parent, e.getMessage());
         }
+    }
+    
+    private static void showWarning(JPassFrame parent, int selectedRow) {
+	    if (selectedRow < 0) {
+	        MessageDialog.showWarningMessage(parent, "Please select an entry.");
+	        return;
+	    }
+    }
+    
+    private static String getTitle(int selectedRow) {
+    	TableModel model =JPassFrame.getInstance().getEntryTable().getModel();
+    	
+    	return model.getValueAt(selectedRow, DataModel.TITLE_COLUMN).toString();
     }
 }
