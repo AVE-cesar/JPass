@@ -30,7 +30,6 @@
 package jpass.ui.action;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.Action;
@@ -43,6 +42,7 @@ import javax.swing.text.JTextComponent;
 
 import jpass.util.ClipboardUtils;
 import jpass.ui.CopiablePasswordField;
+import jpass.JPass;
 
 /**
  * Enumeration which holds text actions and related data.
@@ -51,7 +51,7 @@ import jpass.ui.CopiablePasswordField;
  *
  */
 public enum TextComponentActionType {
-    CUT("jpass.text.cut_action", new TextComponentAction("Cut", KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK), KeyEvent.VK_T) {
+    CUT("jpass.text.cut_action", new TextComponentAction("Cut", KeyStroke.getKeyStroke(KeyEvent.VK_X, JPass.MASK), KeyEvent.VK_T) {
         private static final long serialVersionUID = 6463843410774724700L;
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -77,7 +77,7 @@ public enum TextComponentActionType {
         }
     }),
 
-    COPY("jpass.text.copy_action", new TextComponentAction("Copy", KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK), KeyEvent.VK_C) {
+    COPY("jpass.text.copy_action", new TextComponentAction("Copy", KeyStroke.getKeyStroke(KeyEvent.VK_C, JPass.MASK), KeyEvent.VK_C) {
         private static final long serialVersionUID = 8502265220762730908L;
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -101,7 +101,7 @@ public enum TextComponentActionType {
         }
     }),
 
-    PASTE("jpass.text.paste_action", new TextComponentAction("Paste", KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK), KeyEvent.VK_P) {
+    PASTE("jpass.text.paste_action", new TextComponentAction("Paste", KeyStroke.getKeyStroke(KeyEvent.VK_V, JPass.MASK), KeyEvent.VK_P) {
         private static final long serialVersionUID = -4089879595174370487L;
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -182,7 +182,7 @@ public enum TextComponentActionType {
         }
     }),
 
-    SELECT_ALL("jpass.text.select_all_action", new TextComponentAction("Select All", KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK), KeyEvent.VK_A) {
+    SELECT_ALL("jpass.text.select_all_action", new TextComponentAction("Select All", KeyStroke.getKeyStroke(KeyEvent.VK_A, JPass.MASK), KeyEvent.VK_A) {
         private static final long serialVersionUID = 7236761124177884500L;
         @Override
         public void actionPerformed(ActionEvent e) {

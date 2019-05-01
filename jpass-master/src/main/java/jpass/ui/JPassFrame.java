@@ -31,15 +31,11 @@ package jpass.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.awt.datatransfer.FlavorEvent;
-import java.awt.datatransfer.FlavorListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.InputMap;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -50,17 +46,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
-import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.TableRowSorter;
-import javax.swing.text.DefaultEditorKit;
 
-import jpass.JPass;
 import jpass.data.DataModel;
 import jpass.ui.action.Callback;
 import jpass.ui.action.CloseListener;
@@ -123,8 +115,6 @@ public final class JPassFrame extends JFrame {
 			e.printStackTrace();
 		}
 
-		addClipboardListener();
-		
 		fillToolbar();
 
 		this.menuBar = new JMenuBar();
@@ -151,7 +141,7 @@ public final class JPassFrame extends JFrame {
 		table.getTableHeader().setToolTipText("Click to sort; Shift-Click to sort in reverse order");
 		// tri sur la première colonne par défaut
 		sorter = new TableRowSorter<DataModel>(model);
-        table.setRowSorter(sorter);
+		table.setRowSorter(sorter);
 		table.getRowSorter().toggleSortOrder(0);
 		// sets the popup menu for the table
 		table.setComponentPopupMenu(popup);
@@ -163,9 +153,8 @@ public final class JPassFrame extends JFrame {
 
 		// Create a separate form for filterText and statusText
 		JPanel panel = new JPanel(new BorderLayout());
-        panel.add(new JLabel("Specify a word to match:"),
-                BorderLayout.WEST);
-        
+		panel.add(new JLabel("Specify a word to match:"), BorderLayout.WEST);
+
 		filterText = new JTextField();
 		// Whenever filterText changes, invoke newFilter.
 		filterText.getDocument().addDocumentListener(new DocumentListener() {
@@ -261,7 +250,7 @@ public final class JPassFrame extends JFrame {
 		this.editMenu = new JMenu("Edit");
 		this.editMenu.setMnemonic(KeyEvent.VK_E);
 		this.editMenu.add(MenuActionType.ADD_ENTRY.getAction());
-		
+
 		this.editMenu.add(MenuActionType.EDIT_ENTRY.getAction());
 		this.editMenu.add(MenuActionType.DUPLICATE_ENTRY.getAction());
 		this.editMenu.add(MenuActionType.DELETE_ENTRY.getAction());
@@ -361,7 +350,22 @@ public final class JPassFrame extends JFrame {
 		if (selectTitle != null) {
 			// FIXMEthis.entryTitleList.setSelectedValue(selectTitle, true);
 		}
-		this.statusPanel.setText("Entries count: " + this.getModel().getRowCount());
+		updateStatusText("Entries count: " + this.getModel().getRowCount(), true);
+	}
+
+	public void updateStatusText(String message, boolean permanent) {
+
+		if (permanent) {
+			this.statusPanel.setText(message);
+		} else {
+			String oldText = this.statusPanel.getText();
+			this.statusPanel.setText(message);
+			// FIXME la suite ne marche pas
+			/*
+			 * try { Thread.sleep(1000*1); } catch (InterruptedException e) { }
+			 * this.statusPanel.setText(oldText);
+			 */
+		}
 	}
 
 	/**
@@ -416,7 +420,7 @@ public final class JPassFrame extends JFrame {
 	public void setProcessing(boolean processing) {
 		this.processing = processing;
 		for (MenuActionType actionType : MenuActionType.values()) {
-			//actionType.getAction().setEnabled(!processing);
+			// actionType.getAction().setEnabled(!processing);
 		}
 
 		this.table.setEnabled(!processing);
@@ -445,24 +449,5 @@ public final class JPassFrame extends JFrame {
 			return;
 		}
 		sorter.setRowFilter(rf);
-	}
-
-	private void addClipboardListener() {
-		boolean isMacOs = (System.getProperty("os.name").toLowerCase().contains("mac"));
-		if (isMacOs) {
-		    // Stollen from http://stackoverflow.com/questions/7252749/how-to-use-command-c-command-v-shortcut-in-mac-to-copy-paste-text#answer-7253059
-		    InputMap im = (InputMap) UIManager.get("TextField.focusInputMap");
-		    im.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, JPass.MASK), DefaultEditorKit.copyAction);
-		    im.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, JPass.MASK), DefaultEditorKit.pasteAction);
-		    im.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, JPass.MASK), DefaultEditorKit.cutAction);
-		}
-		
-		Toolkit.getDefaultToolkit().getSystemClipboard().addFlavorListener(new FlavorListener() {
-			   @Override 
-			   public void flavorsChanged(FlavorEvent e) {
-	
-			      System.out.println("ClipBoard UPDATED: " + e.getSource() + " " + e.toString());
-			   } 
-			}); 
 	}
 }

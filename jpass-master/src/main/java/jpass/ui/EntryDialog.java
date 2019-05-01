@@ -32,6 +32,7 @@ package jpass.ui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -62,7 +63,9 @@ import jpass.xml.bind.Entry;
  *
  */
 public class EntryDialog extends JDialog implements ActionListener {
-    private static final long serialVersionUID = -8551022862532925078L;
+    private static final String SANS_SERIF = "SansSerif";
+
+	private static final long serialVersionUID = -8551022862532925078L;
 
     private JPanel fieldPanel;
     private JPanel notesPanel;
@@ -103,6 +106,9 @@ public class EntryDialog extends JDialog implements ActionListener {
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         this.newEntry = newEntry;
 
+        Font font = new Font(SANS_SERIF, Font.BOLD, 20);
+        Dimension dimension = new Dimension( 200, 36 );
+        
         this.formData = null;
 
         this.fieldPanel = new JPanel();
@@ -117,15 +123,20 @@ public class EntryDialog extends JDialog implements ActionListener {
 
         this.fieldPanel.add(new JLabel("User name:"));
         this.userField = TextComponentFactory.newTextField();
+        this.userField.setPreferredSize(dimension);
         this.fieldPanel.add(this.userField);
 
         this.fieldPanel.add(new JLabel("Password:"));
         this.passwordField = TextComponentFactory.newPasswordField(true);
+        this.passwordField.setPreferredSize(dimension);
+        this.passwordField.setFont(font);
         this.ORIGINAL_ECHO = this.passwordField.getEchoChar();
         this.fieldPanel.add(this.passwordField);
 
         this.fieldPanel.add(new JLabel("Repeat:"));
         this.repeatField = TextComponentFactory.newPasswordField(true);
+        this.repeatField.setPreferredSize(dimension);
+        this.repeatField.setFont(font);
         this.fieldPanel.add(this.repeatField);
 
         this.fieldPanel.add(new JLabel(""));

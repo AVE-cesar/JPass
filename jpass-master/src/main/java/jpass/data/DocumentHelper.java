@@ -55,7 +55,9 @@ import jpass.xml.converter.JAXBConverter;
  */
 public final class DocumentHelper {
 
-    /** File name to read/write. */
+    private static final String SCHEMAS_ENTRIES_XSD = "resources/schemas/entries.xsd";
+
+	/** File name to read/write. */
     private final String fileName;
 
     /** Key for encryption. */
@@ -63,7 +65,7 @@ public final class DocumentHelper {
 
     /** Converter between JAXB objects and streams representing XMLs */
     private static final JAXBConverter<Entries> CONVERTER = new JAXBConverter<Entries>(Entries.class,
-            "resources/schemas/entries.xsd");
+            SCHEMAS_ENTRIES_XSD);
 
     /**
      * Creates a DocumentHelper instance.
