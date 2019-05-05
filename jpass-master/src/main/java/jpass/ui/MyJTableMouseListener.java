@@ -18,9 +18,15 @@ public class MyJTableMouseListener implements MouseListener {
 		if (JPassFrame.getInstance().isProcessing()) {
             return;
         }
-        if (SwingUtilities.isLeftMouseButton(event) && event.getClickCount() == 2) {
-            EntryHelper.editEntry(JPassFrame.getInstance());
-        }
+		
+		int selectedRow = JPassFrame.getInstance().getEntryTable().getSelectedRow();
+		if (selectedRow >= 0) {
+			JPassFrame.getInstance().toggleEditMenu(true);
+		
+	        if (SwingUtilities.isLeftMouseButton(event) && event.getClickCount() == 2) {
+	            EntryHelper.editEntry(JPassFrame.getInstance());
+	        }
+		}
 	}
 
 	@Override

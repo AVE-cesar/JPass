@@ -63,6 +63,8 @@ public enum MenuActionType {
 		@Override
 		public void actionPerformed(ActionEvent ev) {
 			FileHelper.createNew(JPassFrame.getInstance());
+			
+			JPassFrame.getInstance().toggleEditMenu(false);
 		}
 	}),
 
@@ -73,6 +75,8 @@ public enum MenuActionType {
 		@Override
 		public void actionPerformed(ActionEvent ev) {
 			FileHelper.openFile(JPassFrame.getInstance());
+			
+			JPassFrame.getInstance().toggleEditMenu(false);
 		}
 	}),
 

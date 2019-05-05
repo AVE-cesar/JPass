@@ -54,6 +54,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.TableRowSorter;
 
 import jpass.data.DataModel;
+import jpass.ui.action.AbstractMenuAction;
 import jpass.ui.action.Callback;
 import jpass.ui.action.CloseListener;
 import jpass.ui.action.MenuActionType;
@@ -75,7 +76,7 @@ public final class JPassFrame extends JFrame {
 	private static volatile JPassFrame INSTANCE;
 
 	public static final String PROGRAM_NAME = "JPass Password Manager";
-	public static final String PROGRAM_VERSION = "1.0.6";
+	public static final String PROGRAM_VERSION = "1.0.7";
 
 	/**
 	 * Popup menu sur la table.
@@ -85,6 +86,14 @@ public final class JPassFrame extends JFrame {
 	private JMenuBar menuBar;
 	private JMenu fileMenu = null;
 	private JMenu editMenu = null;
+	private boolean editMenuActivated  = false;
+	private AbstractMenuAction editAction = null;
+	private AbstractMenuAction duplicateAction = null;
+	private AbstractMenuAction deleteAction = null;
+	private AbstractMenuAction copyUrlAction = null;
+	private AbstractMenuAction copyUserAction = null;
+	private AbstractMenuAction copyPasswordAction = null;
+	
 	private JMenu toolsMenu = null;
 	private JMenu helpMenu = null;
 	private JToolBar toolBar = null;
@@ -251,13 +260,53 @@ public final class JPassFrame extends JFrame {
 		this.editMenu.setMnemonic(KeyEvent.VK_E);
 		this.editMenu.add(MenuActionType.ADD_ENTRY.getAction());
 
-		this.editMenu.add(MenuActionType.EDIT_ENTRY.getAction());
-		this.editMenu.add(MenuActionType.DUPLICATE_ENTRY.getAction());
-		this.editMenu.add(MenuActionType.DELETE_ENTRY.getAction());
+		this.editAction = MenuActionType.EDIT_ENTRY.getAction();
+		this.editMenu.add(editAction);
+		
+		this.duplicateAction = MenuActionType.DUPLICATE_ENTRY.getAction();
+		this.editMenu.add(duplicateAction);
+		
+		this.deleteAction = MenuActionType.DELETE_ENTRY.getAction();
+		this.editMenu.add(deleteAction);
 		this.editMenu.addSeparator();
-		this.editMenu.add(MenuActionType.COPY_URL.getAction());
-		this.editMenu.add(MenuActionType.COPY_USER.getAction());
-		this.editMenu.add(MenuActionType.COPY_PASSWORD.getAction());
+		
+		this.copyUrlAction = MenuActionType.COPY_URL.getAction();
+		this.editMenu.add(copyUrlAction);
+		this.copyUserAction = MenuActionType.COPY_USER.getAction();
+		this.editMenu.add(copyUserAction);
+		this.copyPasswordAction = MenuActionType.COPY_PASSWORD.getAction();
+		this.editMenu.add(copyPasswordAction);
+		this.toggleEditMenu(false);
+		this.editMenuActivated = false;
+	}
+	
+	public void toggleEditMenu(boolean enable) {
+		if (this.editMenuActivated && enable) {
+			return;
+		}
+		if (!this.editMenuActivated && !enable) {
+			return;
+		}
+		
+		if (this.editAction != null) {
+			this.editAction.setEnabled(enable);
+		}
+		if (this.duplicateAction != null) {
+			this.duplicateAction.setEnabled(enable);
+		}
+		if (this.deleteAction != null) {
+			this.deleteAction.setEnabled(enable);
+		}
+		if (this.copyUrlAction != null) {
+			this.copyUrlAction.setEnabled(enable);
+		}
+		if (this.copyUserAction != null) {
+			this.copyUserAction.setEnabled(enable);
+		}
+		if (this.copyPasswordAction != null) {
+			this.copyPasswordAction.setEnabled(enable);
+		}
+		this.editMenuActivated = enable;
 	}
 
 	private void fillFileMenu() {
