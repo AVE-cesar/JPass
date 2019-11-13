@@ -36,9 +36,12 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.Date;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -51,6 +54,7 @@ import javax.swing.SpringLayout;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
+import jpass.util.DateUtils;
 import jpass.util.SpringUtilities;
 import jpass.util.StringUtils;
 import jpass.xml.bind.Entry;
@@ -62,6 +66,10 @@ import jpass.xml.bind.Entry;
  *
  */
 public class EntryDialog extends JDialog implements ActionListener {
+
+	private static final int WIDTH = 600;
+	private static final int HEIGHT = 420;
+
 	private static final String SANS_SERIF = "SansSerif";
 
 	private static final long serialVersionUID = -8551022862532925078L;
@@ -78,6 +86,8 @@ public class EntryDialog extends JDialog implements ActionListener {
 	private JPasswordField passwordField;
 	private JPasswordField repeatField;
 	private JTextField urlField;
+	private JCheckBox enableField;
+	private JTextField hitField;
 	private JTextArea notesField;
 
 	private JButton okButton;
@@ -136,6 +146,15 @@ public class EntryDialog extends JDialog implements ActionListener {
 		this.urlField = TextComponentFactory.newTextField();
 		this.fieldPanel.add(this.urlField);
 
+		this.fieldPanel.add(new JLabel("Enable:"));
+		this.enableField = TextComponentFactory.newCheckBoxField();
+		this.fieldPanel.add(this.enableField);
+
+		this.fieldPanel.add(new JLabel("Hit:"));
+		this.hitField = TextComponentFactory.newTextField();
+		this.hitField.setEnabled(false);
+		this.fieldPanel.add(this.hitField);
+
 		this.fieldPanel.add(new JLabel("User name:"));
 		this.userField = TextComponentFactory.newTextField();
 		this.userField.setPreferredSize(dimension);
@@ -169,7 +188,8 @@ public class EntryDialog extends JDialog implements ActionListener {
 		this.fieldPanel.add(this.passwordButtonPanel);
 
 		this.fieldPanel.setLayout(new SpringLayout());
-		SpringUtilities.makeCompactGrid(this.fieldPanel, 8, 2, // rows, columns
+		int nbRowsInDialog = 10;
+		SpringUtilities.makeCompactGrid(this.fieldPanel, nbRowsInDialog, 2, // rows, columns
 				5, 5, // initX, initY
 				5, 5); // xPad, yPad
 
@@ -200,7 +220,7 @@ public class EntryDialog extends JDialog implements ActionListener {
 		getContentPane().add(this.buttonPanel, BorderLayout.SOUTH);
 
 		fillDialogData(entry);
-		setSize(420, 400);
+		setSize(HEIGHT, WIDTH);
 		setMinimumSize(new Dimension(300, 300));
 		setLocationRelativeTo(parent);
 		setVisible(true);
@@ -248,20 +268,24 @@ public class EntryDialog extends JDialog implements ActionListener {
 	 */
 	private void fillDialogData(Entry entry) {
 		if (entry == null) {
-			this.creationDateField.setText(null);
+			this.creationDateField.setText(DateUtils.dateToString(new Date()));
+			this.updateDateField.setText(DateUtils.dateToString(new Date()));
 
+			this.hitField.setText("0");
 			return;
 		}
 		this.originalTitle = entry.getTitle() == null ? "" : entry.getTitle();
 		this.titleField.setText(this.originalTitle + (this.newEntry ? " (copy)" : ""));
-		this.creationDateField.setText(entry.getCreationDate() == null ? "" : entry.getCreationDate().toString());
-		this.updateDateField.setText(entry.getUpdateDate() == null ? "" : entry.getUpdateDate().toString());
+		this.creationDateField.setText(entry.getCreationDate() == null ? "" : DateUtils.dateToString(entry.getCreationDate()));
+		this.updateDateField.setText(entry.getUpdateDate() == null ? "" : DateUtils.dateToString(entry.getUpdateDate()));
 		this.userField.setText(entry.getUser() == null ? "" : entry.getUser());
 		this.passwordField.setText(entry.getPassword() == null ? "" : entry.getPassword());
 		this.repeatField.setText(entry.getPassword() == null ? "" : entry.getPassword());
 		this.urlField.setText(entry.getUrl() == null ? "" : entry.getUrl());
 		this.notesField.setText(entry.getNotes() == null ? "" : entry.getNotes());
 		this.notesField.setCaretPosition(0);
+		this.enableField.setSelected(!entry.isDisabled());
+		this.hitField.setText(entry.getHit() == null ? "0" : entry.getHit().toString());
 	}
 
 	/**
@@ -277,12 +301,20 @@ public class EntryDialog extends JDialog implements ActionListener {
 		String password = StringUtils.stripNonValidXMLCharacters(String.valueOf(this.passwordField.getPassword()));
 		String url = StringUtils.stripNonValidXMLCharacters(this.urlField.getText());
 		String notes = StringUtils.stripNonValidXMLCharacters(this.notesField.getText());
+		Date creationDate = DateUtils.stringToDate(this.creationDateField.getText());
+		Date updateDate = new Date();
+		boolean disable = !this.enableField.isSelected();
+		BigInteger hit = new BigInteger(this.hitField.getText());
 
 		entry.setTitle(title == null || title.isEmpty() ? null : title);
 		entry.setUser(user == null || user.isEmpty() ? null : user);
 		entry.setPassword(password == null || password.isEmpty() ? null : password);
 		entry.setUrl(url == null || url.isEmpty() ? null : url);
 		entry.setNotes(notes == null || notes.isEmpty() ? null : notes);
+		entry.setCreationDate(creationDate);
+		entry.setUpdateDate(updateDate);
+		entry.setDisabled(disable);
+		entry.setHit(hit.add(new BigInteger("1")));
 
 		return entry;
 	}

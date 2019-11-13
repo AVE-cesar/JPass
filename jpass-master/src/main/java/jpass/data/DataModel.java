@@ -35,6 +35,7 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
+import jpass.util.DateUtils;
 import jpass.xml.bind.Entries;
 import jpass.xml.bind.Entry;
 
@@ -48,16 +49,17 @@ import jpass.xml.bind.Entry;
 public class DataModel extends AbstractTableModel {
 	private static volatile DataModel INSTANCE;
 
-	public static int TITLE_COLUMN = 0;
-	public static int URL_COLUMN = 1;
-	public static int USER_COLUMN = 2;
-	public static int PASSWORD_COLUMN = 3;
-	public static int NOTES_COLUMN = 4;
-	public static int CREATIONDATE_COLUMN = 5;
-	public static int UPDATEDATE_COLUMN = 6;
+	public static final int TITLE_COLUMN = 0;
+	public static final int URL_COLUMN = 1;
+	public static final int USER_COLUMN = 2;
+	public static final int PASSWORD_COLUMN = 3;
+	public static final int NOTES_COLUMN = 4;
+	public static final int CREATIONDATE_COLUMN = 5;
+	public static final int UPDATEDATE_COLUMN = 6;
+	public static final int ENABLE_COLUMN = 7;
+	public static final int HIT_COLUMN = 8;
 
-	private String[] columnNames = new String[] { "Title", "URL", "Username", "Password", "Notes", "Creation date",
-			"Update date" };
+	private String[] columnNames = new String[] { "Title", "URL", "Username", "Password", "Notes", "Creation date", "Update date", "Enable", "Hit" };
 
 	private Entries entries = new Entries();
 	private String fileName = null;
@@ -240,12 +242,7 @@ public class DataModel extends AbstractTableModel {
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		/*
-		 * if (columnIndex ==0) { System.out.println("appel de getValueAt:" + rowIndex +
-		 * ", " + columnIndex);
-		 * 
-		 * System.out.println("Le model contient: " + this.entries.getEntry().size()); }
-		 */
+
 		String value = null;
 
 		if (rowIndex < 0 && rowIndex > getRowCount() - 1)
@@ -265,14 +262,45 @@ public class DataModel extends AbstractTableModel {
 			value = this.entries.getEntries().get(rowIndex).getNotes();
 		} else if (columnIndex == CREATIONDATE_COLUMN) {
 			Date creationDate = this.entries.getEntries().get(rowIndex).getCreationDate();
-			value = creationDate == null ? null : creationDate.toString();
+			value = creationDate == null ? null : DateUtils.dateToString(creationDate);
 		} else if (columnIndex == UPDATEDATE_COLUMN) {
 			Date updateDate = this.entries.getEntries().get(rowIndex).getUpdateDate();
-			value = updateDate == null ? null : updateDate.toString();
+			value = updateDate == null ? null : DateUtils.dateToString(updateDate);
+		} else if (columnIndex == ENABLE_COLUMN) {
+			return !this.entries.getEntries().get(rowIndex).isDisabled();
+		} else if (columnIndex == HIT_COLUMN) {
+
+			value = this.entries.getEntries().get(rowIndex).getHit().toString();
 		} else {
 		}
-		// System.out.println("Value:" + value);
+
 		return value;
+	}
+
+	@Override
+	public Class<?> getColumnClass(int columnIndex) {
+		switch (columnIndex) {
+		case TITLE_COLUMN:
+			return String.class;
+		case URL_COLUMN:
+			return String.class;
+		case USER_COLUMN:
+			return String.class;
+		case PASSWORD_COLUMN:
+			return String.class;
+		case NOTES_COLUMN:
+			return String.class;
+		case CREATIONDATE_COLUMN:
+			return String.class;
+		case UPDATEDATE_COLUMN:
+			return String.class;
+		case ENABLE_COLUMN:
+			return Boolean.class;
+		case HIT_COLUMN:
+			return String.class;
+		default:
+			return String.class;
+		}
 	}
 
 	@Override

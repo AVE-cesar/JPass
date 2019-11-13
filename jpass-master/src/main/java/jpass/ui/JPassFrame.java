@@ -255,6 +255,7 @@ public final class JPassFrame extends JFrame {
 		this.toolsMenu.setMnemonic(KeyEvent.VK_T);
 		this.toolsMenu.add(MenuActionType.GENERATE_PASSWORD.getAction());
 		this.toolsMenu.add(MenuActionType.CLEAR_CLIPBOARD.getAction());
+		this.toolsMenu.add(MenuActionType.TOGGLE_ENABLED_ENTRIES.getAction());
 	}
 
 	private void fillEditMenu() {
@@ -384,8 +385,7 @@ public final class JPassFrame extends JFrame {
 	 * Refresh frame title based on data model.
 	 */
 	public void refreshFrameTitle() {
-		setTitle((getModel().isModified() ? "*" : "")
-				+ (getModel().getFileName() == null ? "Untitled" : getModel().getFileName()) + " - " + PROGRAM_NAME);
+		setTitle((getModel().isModified() ? "*" : "") + (getModel().getFileName() == null ? "Untitled" : getModel().getFileName()) + " - " + PROGRAM_NAME);
 	}
 
 	/**
@@ -438,9 +438,7 @@ public final class JPassFrame extends JFrame {
 			return;
 		}
 		if (this.model.isModified()) {
-			int option = MessageDialog.showQuestionMessage(this,
-					"The current file has been modified.\n" + "Do you want to save the changes before closing?",
-					MessageDialog.YES_NO_CANCEL_OPTION);
+			int option = MessageDialog.showQuestionMessage(this, "The current file has been modified.\n" + "Do you want to save the changes before closing?", MessageDialog.YES_NO_CANCEL_OPTION);
 			if (option == MessageDialog.YES_OPTION) {
 				FileHelper.saveFile(this, false, new Callback() {
 					@Override
@@ -494,8 +492,7 @@ public final class JPassFrame extends JFrame {
 		RowFilter<DataModel, Object> rf = null;
 		List<RowFilter<Object, Object>> rfs = new ArrayList<RowFilter<Object, Object>>();
 		// If current expression doesn't parse, don't update.
-		int columns[] = { DataModel.TITLE_COLUMN, DataModel.URL_COLUMN, DataModel.USER_COLUMN,
-				DataModel.PASSWORD_COLUMN, DataModel.NOTES_COLUMN };
+		int columns[] = { DataModel.TITLE_COLUMN, DataModel.URL_COLUMN, DataModel.USER_COLUMN, DataModel.PASSWORD_COLUMN, DataModel.NOTES_COLUMN };
 		String text = filterText.getText();
 		String[] textArray = text.split(" ");
 		try {
@@ -509,5 +506,9 @@ public final class JPassFrame extends JFrame {
 			return;
 		}
 		sorter.setRowFilter(rf);
+	}
+
+	public void filterEnableEntries(boolean enableOnly) {
+		sorter.setRowFilter(RowFilter.regexFilter("(?i)" + enableOnly, DataModel.ENABLE_COLUMN));
 	}
 }
