@@ -73,7 +73,7 @@ public final class DocumentHelper {
      * @param fileName file name
      * @param key key for encryption
      */
-    private DocumentHelper(final String fileName, final byte[] key) {
+    public DocumentHelper(final String fileName, final byte[] key) {
         this.fileName = fileName;
         this.key = key;
     }

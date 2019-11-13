@@ -30,6 +30,7 @@
 package jpass.data;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
@@ -43,180 +44,193 @@ import jpass.xml.bind.Entry;
  * @author Gabor_Bata
  *
  */
+@SuppressWarnings("serial")
 public class DataModel extends AbstractTableModel {
-    private static volatile DataModel INSTANCE;
+	private static volatile DataModel INSTANCE;
 
-    public static int TITLE_COLUMN = 0;
-    public static int URL_COLUMN = 1;
-    public static int USER_COLUMN = 2;
-    public static int PASSWORD_COLUMN = 3;
-    public static int NOTES_COLUMN = 4;
-    
-    private String[] columnNames = new String[] {"Title", "URL", "Username", "Password", "Notes"};
-    
-    private Entries entries = new Entries();
-    private String fileName = null;
-    private transient byte[] password = null;
-    private boolean modified = false;
+	public static int TITLE_COLUMN = 0;
+	public static int URL_COLUMN = 1;
+	public static int USER_COLUMN = 2;
+	public static int PASSWORD_COLUMN = 3;
+	public static int NOTES_COLUMN = 4;
+	public static int CREATIONDATE_COLUMN = 5;
+	public static int UPDATEDATE_COLUMN = 6;
 
-    private DataModel() {
-        // not intended to be instantiated
-    }
+	private String[] columnNames = new String[] { "Title", "URL", "Username", "Password", "Notes", "Creation date",
+			"Update date" };
 
-    /**
-     * Gets the DataModel singleton instance.
-     *
-     * @return instance of the DataModel
-     */
-    public static DataModel getInstance() {
-        if (INSTANCE == null) {
-            synchronized (DataModel.class) {
-                if (INSTANCE == null) {
-                    INSTANCE = new DataModel();
-                }
-            }
-        }
-        return INSTANCE;
-    }
+	private Entries entries = new Entries();
+	private String fileName = null;
+	private transient byte[] password = null;
+	private boolean modified = false;
 
-    /**
-     * Gets list of entries.
-     *
-     * @return list of entries
-     */
-    public final Entries getEntries() {
-        return this.entries;
-    }
+	private DataModel() {
+		// not intended to be instantiated
+	}
 
-    /**
-     * Sets list of entries.
-     *
-     * @param entries entries
-     */
-    public final void setEntries(final Entries entries) {
-    	System.out.println("On fixe les entrées du model");
-        this.entries = entries;
-        this.fireTableDataChanged();
-    }
+	/**
+	 * Gets the DataModel singleton instance.
+	 *
+	 * @return instance of the DataModel
+	 */
+	public static DataModel getInstance() {
+		if (INSTANCE == null) {
+			synchronized (DataModel.class) {
+				if (INSTANCE == null) {
+					INSTANCE = new DataModel();
+				}
+			}
+		}
+		return INSTANCE;
+	}
 
-    /**
-     * Gets the file name for the data model.
-     *
-     * @return file name
-     */
-    public final String getFileName() {
-        return this.fileName;
-    }
+	/**
+	 * Gets list of entries.
+	 *
+	 * @return list of entries
+	 */
+	public final Entries getEntries() {
+		return this.entries;
+	}
 
-    /**
-     * Sets the file name for the data model.
-     *
-     * @param fileName file name
-     */
-    public final void setFileName(final String fileName) {
-        this.fileName = fileName;
-    }
+	/**
+	 * Sets list of entries.
+	 *
+	 * @param entries
+	 *            entries
+	 */
+	public final void setEntries(final Entries entries) {
+		System.out.println("On fixe les entrées du model");
+		this.entries = entries;
+		this.fireTableDataChanged();
+	}
 
-    /**
-     * Gets the modified state of the data model.
-     *
-     * @return modified state of the data model
-     */
-    public final boolean isModified() {
-        return this.modified;
-    }
+	/**
+	 * Gets the file name for the data model.
+	 *
+	 * @return file name
+	 */
+	public final String getFileName() {
+		return this.fileName;
+	}
 
-    /**
-     * Sets the modified state of the data model.
-     *
-     * @param modified modified state
-     */
-    public final void setModified(final boolean modified) {
-        this.modified = modified;
-    }
+	/**
+	 * Sets the file name for the data model.
+	 *
+	 * @param fileName
+	 *            file name
+	 */
+	public final void setFileName(final String fileName) {
+		this.fileName = fileName;
+	}
 
-    public byte[] getPassword() {
-        return this.password;
-    }
+	/**
+	 * Gets the modified state of the data model.
+	 *
+	 * @return modified state of the data model
+	 */
+	public final boolean isModified() {
+		return this.modified;
+	}
 
-    public void setPassword(byte[] password) {
-        this.password = password;
-    }
+	/**
+	 * Sets the modified state of the data model.
+	 *
+	 * @param modified
+	 *            modified state
+	 */
+	public final void setModified(final boolean modified) {
+		this.modified = modified;
+	}
 
-    /**
-     * Clears all fields of the data model.
-     */
-    public final void clear() {
-        this.entries.getEntry().clear();
-        this.fileName = null;
-        this.password = null;
-        this.modified = false;
-    }
+	public byte[] getPassword() {
+		return this.password;
+	}
 
-    /**
-     * Gets the list of entry titles.
-     *
-     * @return list of entry titles
-     */
-    public List<String> getListOfTitles() {
-        List<String> list = new ArrayList<String>(this.entries.getEntry().size());
-        for (Entry entry : this.entries.getEntry()) {
-            list.add(entry.getTitle());
-        }
-        return list;
-    }
+	public void setPassword(byte[] password) {
+		this.password = password;
+	}
 
-    /**
-     * Gets entry index by title.
-     *
-     * @param title entry title
-     * @return entry index
-     */
-    public int getEntryIndexByTitle(String title) {
-    	System.out.println("on recherche: "  + title);
-        return getListOfTitles().indexOf(title);
-    }
+	/**
+	 * Clears all fields of the data model.
+	 */
+	public final void clear() {
+		this.entries.getEntries().clear();
+		this.fileName = null;
+		this.password = null;
+		this.modified = false;
+	}
 
-    /**
-     * Gets entry by title.
-     *
-     * @param title entry title
-     * @return entry
-     */
-    public Entry getEntryByTitle(String title) {
-    	int index = getEntryIndexByTitle(title);
-    	if (index >= 0) {
-        return this.entries.getEntry().get(index);
-    	} else return null;
-    }
-    
-    public Entry findEntry(String title) {
-    	Entry foundedEntry = null;
-    	for (Entry entry : this.entries.getEntry()) {
-    		if (entry.getTitle().contains(title)) {
-    			foundedEntry = entry;
-    			break;
-    		}
-    	}
-    	return foundedEntry;
-    }
-    
-    public int findEntryIndex(String title) {
-    	int index = 0;
-    	boolean founded = false;
-    	for (Entry entry : this.entries.getEntry()) {
-    		index++;
-    		if (entry.getTitle().equalsIgnoreCase(title)) {
-    			founded = true;
-    			break;
-    		}
-    	}
-    	if (founded) return index; else return -1;
-    }
+	/**
+	 * Gets the list of entry titles.
+	 *
+	 * @return list of entry titles
+	 */
+	public List<String> getListOfTitles() {
+		List<String> list = new ArrayList<String>(this.entries.getEntries().size());
+		for (Entry entry : this.entries.getEntries()) {
+			list.add(entry.getTitle());
+		}
+		return list;
+	}
+
+	/**
+	 * Gets entry index by title.
+	 *
+	 * @param title
+	 *            entry title
+	 * @return entry index
+	 */
+	public int getEntryIndexByTitle(String title) {
+		System.out.println("on recherche: " + title);
+		return getListOfTitles().indexOf(title);
+	}
+
+	/**
+	 * Gets entry by title.
+	 *
+	 * @param title
+	 *            entry title
+	 * @return entry
+	 */
+	public Entry getEntryByTitle(String title) {
+		int index = getEntryIndexByTitle(title);
+		if (index >= 0) {
+			return this.entries.getEntries().get(index);
+		} else
+			return null;
+	}
+
+	public Entry findEntry(String title) {
+		Entry foundedEntry = null;
+		for (Entry entry : this.entries.getEntries()) {
+			if (entry.getTitle().contains(title)) {
+				foundedEntry = entry;
+				break;
+			}
+		}
+		return foundedEntry;
+	}
+
+	public int findEntryIndex(String title) {
+		int index = 0;
+		boolean founded = false;
+		for (Entry entry : this.entries.getEntries()) {
+			index++;
+			if (entry.getTitle().equalsIgnoreCase(title)) {
+				founded = true;
+				break;
+			}
+		}
+		if (founded)
+			return index;
+		else
+			return -1;
+	}
 
 	@Override
 	public int getRowCount() {
-		return this.entries.getEntry().size();
+		return this.entries.getEntries().size();
 	}
 
 	@Override
@@ -226,29 +240,38 @@ public class DataModel extends AbstractTableModel {
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		/*if (columnIndex ==0) {
-			System.out.println("appel de getValueAt:" + rowIndex + ", " + columnIndex);
-		
-			System.out.println("Le model contient: " + this.entries.getEntry().size());
-		}*/
+		/*
+		 * if (columnIndex ==0) { System.out.println("appel de getValueAt:" + rowIndex +
+		 * ", " + columnIndex);
+		 * 
+		 * System.out.println("Le model contient: " + this.entries.getEntry().size()); }
+		 */
 		String value = null;
-		
-		if (rowIndex < 0 && rowIndex > getRowCount()-1) return null;
-		if (columnIndex < 0 && columnIndex > getColumnCount()-1) return null;
-		
+
+		if (rowIndex < 0 && rowIndex > getRowCount() - 1)
+			return null;
+		if (columnIndex < 0 && columnIndex > getColumnCount() - 1)
+			return null;
+
 		if (columnIndex == TITLE_COLUMN) {
-			value = this.entries.getEntry().get(rowIndex).getTitle();
+			value = this.entries.getEntries().get(rowIndex).getTitle();
 		} else if (columnIndex == URL_COLUMN) {
-			value = this.entries.getEntry().get(rowIndex).getUrl();
+			value = this.entries.getEntries().get(rowIndex).getUrl();
 		} else if (columnIndex == USER_COLUMN) {
-			value = this.entries.getEntry().get(rowIndex).getUser();
+			value = this.entries.getEntries().get(rowIndex).getUser();
 		} else if (columnIndex == PASSWORD_COLUMN) {
-			value = this.entries.getEntry().get(rowIndex).getPassword();
+			value = this.entries.getEntries().get(rowIndex).getPassword();
 		} else if (columnIndex == NOTES_COLUMN) {
-			value = this.entries.getEntry().get(rowIndex).getNotes();
+			value = this.entries.getEntries().get(rowIndex).getNotes();
+		} else if (columnIndex == CREATIONDATE_COLUMN) {
+			Date creationDate = this.entries.getEntries().get(rowIndex).getCreationDate();
+			value = creationDate == null ? null : creationDate.toString();
+		} else if (columnIndex == UPDATEDATE_COLUMN) {
+			Date updateDate = this.entries.getEntries().get(rowIndex).getUpdateDate();
+			value = updateDate == null ? null : updateDate.toString();
 		} else {
 		}
-		//System.out.println("Value:" + value);
+		// System.out.println("Value:" + value);
 		return value;
 	}
 

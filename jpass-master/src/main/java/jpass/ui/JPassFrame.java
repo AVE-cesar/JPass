@@ -33,6 +33,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -86,14 +88,14 @@ public final class JPassFrame extends JFrame {
 	private JMenuBar menuBar;
 	private JMenu fileMenu = null;
 	private JMenu editMenu = null;
-	private boolean editMenuActivated  = false;
+	private boolean editMenuActivated = false;
 	private AbstractMenuAction editAction = null;
 	private AbstractMenuAction duplicateAction = null;
 	private AbstractMenuAction deleteAction = null;
 	private AbstractMenuAction copyUrlAction = null;
 	private AbstractMenuAction copyUserAction = null;
 	private AbstractMenuAction copyPasswordAction = null;
-	
+
 	private JMenu toolsMenu = null;
 	private JMenu helpMenu = null;
 	private JToolBar toolBar = null;
@@ -262,14 +264,14 @@ public final class JPassFrame extends JFrame {
 
 		this.editAction = MenuActionType.EDIT_ENTRY.getAction();
 		this.editMenu.add(editAction);
-		
+
 		this.duplicateAction = MenuActionType.DUPLICATE_ENTRY.getAction();
 		this.editMenu.add(duplicateAction);
-		
+
 		this.deleteAction = MenuActionType.DELETE_ENTRY.getAction();
 		this.editMenu.add(deleteAction);
 		this.editMenu.addSeparator();
-		
+
 		this.copyUrlAction = MenuActionType.COPY_URL.getAction();
 		this.editMenu.add(copyUrlAction);
 		this.copyUserAction = MenuActionType.COPY_USER.getAction();
@@ -279,7 +281,7 @@ public final class JPassFrame extends JFrame {
 		this.toggleEditMenu(false);
 		this.editMenuActivated = false;
 	}
-	
+
 	public void toggleEditMenu(boolean enable) {
 		if (this.editMenuActivated && enable) {
 			return;
@@ -287,7 +289,7 @@ public final class JPassFrame extends JFrame {
 		if (!this.editMenuActivated && !enable) {
 			return;
 		}
-		
+
 		if (this.editAction != null) {
 			this.editAction.setEnabled(enable);
 		}
@@ -490,10 +492,18 @@ public final class JPassFrame extends JFrame {
 	 */
 	private void newFilter() {
 		RowFilter<DataModel, Object> rf = null;
+		List<RowFilter<Object, Object>> rfs = new ArrayList<RowFilter<Object, Object>>();
 		// If current expression doesn't parse, don't update.
+		int columns = 0;
+		String text = filterText.getText();
+		String[] textArray = text.split(" ");
 		try {
 			// le préfixe permet d'être insensible à la casse
-			rf = RowFilter.regexFilter("(?i)" + filterText.getText(), 0);
+			for (int i = 0; i < textArray.length; i++) {
+				rfs.add(RowFilter.regexFilter("(?i)" + textArray[i], 0, 1, 2, 4));
+			}
+
+			rf = RowFilter.andFilter(rfs);
 		} catch (java.util.regex.PatternSyntaxException e) {
 			return;
 		}

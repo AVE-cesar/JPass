@@ -83,7 +83,7 @@ public class BrowserUtils {
 	    Runtime runtime = Runtime.getRuntime();
 	    String[] args = { "osascript", "-e", "open location \"" + url + "\"" };
 	    try {
-	        Process process = runtime.exec(args);
+	        runtime.exec(args);
 	    } catch (IOException e) {
 	        e.printStackTrace();
 	    }

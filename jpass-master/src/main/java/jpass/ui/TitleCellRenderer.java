@@ -5,7 +5,6 @@ import java.awt.Font;
 
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
 
 public class TitleCellRenderer extends DefaultTableCellRenderer {
 

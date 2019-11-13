@@ -29,7 +29,6 @@
 
 package jpass.ui.helper;
 
-import javax.swing.JOptionPane;
 import javax.swing.table.TableModel;
 
 import jpass.util.BrowserUtils;
@@ -68,7 +67,7 @@ public final class EntryHelper {
                 MessageDialog.YES_NO_OPTION);
         if (option == MessageDialog.YES_OPTION) {
             
-            parent.getModel().getEntries().getEntry().remove(parent.getModel().getEntryByTitle(title));
+            parent.getModel().getEntries().getEntries().remove(parent.getModel().getEntryByTitle(title));
             parent.getModel().setModified(true);
             parent.refreshFrameTitle();
             parent.refreshEntryTitleList(null);
@@ -91,7 +90,7 @@ public final class EntryHelper {
         Entry oldEntry = parent.getModel().getEntryByTitle(title);
         EntryDialog ed = new EntryDialog(parent, "Duplicate Entry", oldEntry, true);
         if (ed.getFormData() != null) {
-            parent.getModel().getEntries().getEntry().add(ed.getFormData());
+            parent.getModel().getEntries().getEntries().add(ed.getFormData());
             parent.getModel().setModified(true);
             parent.refreshFrameTitle();
             parent.refreshEntryTitleList(ed.getFormData().getTitle());
@@ -114,8 +113,8 @@ public final class EntryHelper {
         Entry oldEntry = parent.getModel().getEntryByTitle(title);
         EntryDialog ed = new EntryDialog(parent, "Edit Entry", oldEntry, false);
         if (ed.getFormData() != null) {
-            parent.getModel().getEntries().getEntry().remove(oldEntry);
-            parent.getModel().getEntries().getEntry().add(ed.getFormData());
+            parent.getModel().getEntries().getEntries().remove(oldEntry);
+            parent.getModel().getEntries().getEntries().add(ed.getFormData());
             parent.getModel().setModified(true);
             parent.refreshFrameTitle();
             parent.refreshEntryTitleList(ed.getFormData().getTitle());
@@ -130,7 +129,7 @@ public final class EntryHelper {
     public static void addEntry(JPassFrame parent) {
         EntryDialog ed = new EntryDialog(parent, "Add New Entry", null, true);
         if (ed.getFormData() != null) {
-            parent.getModel().getEntries().getEntry().add(ed.getFormData());
+            parent.getModel().getEntries().getEntries().add(ed.getFormData());
             parent.getModel().setModified(true);
             parent.refreshFrameTitle();
             parent.refreshEntryTitleList(ed.getFormData().getTitle());

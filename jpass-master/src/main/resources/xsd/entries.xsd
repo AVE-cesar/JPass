@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
   <xs:element name="entries">
     <xs:complexType>
       <xs:sequence>
@@ -24,6 +25,10 @@
       <xs:element name="user" type="xs:string" minOccurs="0" />
       <xs:element name="password" type="xs:string" minOccurs="0" />
       <xs:element name="notes" type="xs:string" minOccurs="0" />
+      <xs:element name="creationDate" type="xs:dateTime" minOccurs="1" />
+      <xs:element name="updateDate" type="xs:dateTime" minOccurs="1" />
+      <xs:element name="hit" type="xs:integer" minOccurs="1" />
+      <xs:element name="disabled" type="xs:boolean" minOccurs="1"/>
     </xs:sequence>
   </xs:complexType>
 </xs:schema>
