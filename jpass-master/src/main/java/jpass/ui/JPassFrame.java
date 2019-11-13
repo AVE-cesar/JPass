@@ -494,13 +494,14 @@ public final class JPassFrame extends JFrame {
 		RowFilter<DataModel, Object> rf = null;
 		List<RowFilter<Object, Object>> rfs = new ArrayList<RowFilter<Object, Object>>();
 		// If current expression doesn't parse, don't update.
-		int columns = 0;
+		int columns[] = { DataModel.TITLE_COLUMN, DataModel.URL_COLUMN, DataModel.USER_COLUMN,
+				DataModel.PASSWORD_COLUMN, DataModel.NOTES_COLUMN };
 		String text = filterText.getText();
 		String[] textArray = text.split(" ");
 		try {
 			// le préfixe permet d'être insensible à la casse
 			for (int i = 0; i < textArray.length; i++) {
-				rfs.add(RowFilter.regexFilter("(?i)" + textArray[i], 0, 1, 2, 4));
+				rfs.add(RowFilter.regexFilter("(?i)" + textArray[i], columns));
 			}
 
 			rf = RowFilter.andFilter(rfs);
