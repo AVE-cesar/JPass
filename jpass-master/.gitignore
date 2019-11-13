@@ -16,3 +16,6 @@ build/
 # Ignore Gradle GUI config
 gradle-app.setting
 /.classpath
+/test.jpass
+/test.xml
+/MesPasswords.jpass
