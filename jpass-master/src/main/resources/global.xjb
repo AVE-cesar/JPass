@@ -9,5 +9,7 @@
         <xjc:serializable uid="-1" />
         <xjc:javaType name="java.util.Date" xmlType="xs:dateTime"
             adapter="jpass.util.DateAdapter" />
+        <xjc:javaType name="java.lang.Integer" xmlType="xs:integer"
+            adapter="jpass.util.IntegerAdapter" />    
     </jaxb:globalBindings>
 </jaxb:bindings>

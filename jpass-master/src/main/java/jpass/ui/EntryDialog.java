@@ -36,7 +36,6 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -304,7 +303,7 @@ public class EntryDialog extends JDialog implements ActionListener {
 		Date creationDate = DateUtils.stringToDate(this.creationDateField.getText());
 		Date updateDate = new Date();
 		boolean disable = !this.enableField.isSelected();
-		BigInteger hit = new BigInteger(this.hitField.getText());
+		String hit = this.hitField.getText();
 
 		entry.setTitle(title == null || title.isEmpty() ? null : title);
 		entry.setUser(user == null || user.isEmpty() ? null : user);
@@ -314,7 +313,7 @@ public class EntryDialog extends JDialog implements ActionListener {
 		entry.setCreationDate(creationDate);
 		entry.setUpdateDate(updateDate);
 		entry.setDisabled(disable);
-		entry.setHit(hit.add(new BigInteger("1")));
+		entry.setHit(Integer.valueOf(hit) + 1);
 
 		return entry;
 	}

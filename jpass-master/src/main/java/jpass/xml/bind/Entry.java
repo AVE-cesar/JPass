@@ -2,7 +2,6 @@
 package jpass.xml.bind;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -11,6 +10,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import jpass.util.DateAdapter;
+import jpass.util.IntegerAdapter;
 
 
 /**
@@ -77,8 +77,10 @@ public class Entry
     @XmlJavaTypeAdapter(DateAdapter.class)
     @XmlSchemaType(name = "dateTime")
     protected Date updateDate;
-    @XmlElement(required = true)
-    protected BigInteger hit;
+    @XmlElement(required = true, type = String.class)
+    @XmlJavaTypeAdapter(IntegerAdapter.class)
+    @XmlSchemaType(name = "integer")
+    protected Integer hit;
     protected boolean disabled;
 
     /**
@@ -254,10 +256,10 @@ public class Entry
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link String }
      *     
      */
-    public BigInteger getHit() {
+    public Integer getHit() {
         return hit;
     }
 
@@ -266,10 +268,10 @@ public class Entry
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link String }
      *     
      */
-    public void setHit(BigInteger value) {
+    public void setHit(Integer value) {
         this.hit = value;
     }
 

@@ -5,7 +5,7 @@
 	<groupId>jpass</groupId>
 	<artifactId>jpass</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.8</version>
+	<version>1.0.9</version>
 	<name>JPass</name>
 
 	<properties>
@@ -85,12 +85,6 @@
 	</build>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.seleniumhq.selenium</groupId>
-			<artifactId>selenium-server</artifactId>
-			<version>3.0.1</version>
-		</dependency>
-
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

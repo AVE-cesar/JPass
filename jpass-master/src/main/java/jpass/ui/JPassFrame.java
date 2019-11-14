@@ -78,7 +78,9 @@ public final class JPassFrame extends JFrame {
 	private static volatile JPassFrame INSTANCE;
 
 	public static final String PROGRAM_NAME = "JPass Password Manager";
-	public static final String PROGRAM_VERSION = "1.0.7";
+	public static final String PROGRAM_VERSION = "1.0.9";
+
+	public static final String DEFAULT_FILENAME = "MesPasswords.jpass";
 
 	/**
 	 * Popup menu sur la table.
@@ -217,8 +219,8 @@ public final class JPassFrame extends JFrame {
 			// on recherche un fichier .jpass au même endroit
 			LOGGER.info("on précharge le premier fichier jpass situé dans le même répertoire.");
 			try {
-				LOGGER.info("Ce fichier est: " + FileUtils.findJPassFile());
-				FileHelper.doOpenFile(FileUtils.findJPassFile(), this);
+				LOGGER.info("Ce fichier est: " + FileUtils.findJPassFile("./" + DEFAULT_FILENAME));
+				FileHelper.doOpenFile(FileUtils.findJPassFile("./" + DEFAULT_FILENAME), this);
 			} catch (IOException e) {
 				LOGGER.log(Level.WARNING, "", e);
 			}

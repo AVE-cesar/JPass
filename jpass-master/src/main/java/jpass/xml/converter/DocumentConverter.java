@@ -42,7 +42,7 @@ public class DocumentConverter {
 				entry.setUpdateDate(new Date());
 			}
 			if (entry.getHit() == null) {
-				entry.setHit(new BigInteger("0"));
+				entry.setHit(0);
 			}
 		}
 
