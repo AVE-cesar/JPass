@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.logging.Logger;
 
 import org.junit.Assert;
@@ -39,6 +40,7 @@ public class JAXBConverterTest {
 
 			entry.setTitle("a");
 			entries = objectFactory.createEntries();
+			entries.setUpdateDate(new Date());
 			entries.getEntries().add(entry);
 
 			converter.marshal(entries, outputStream, Boolean.valueOf(false));

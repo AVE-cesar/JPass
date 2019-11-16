@@ -3,24 +3,20 @@ package jpass.xml.bind;
 
 import java.io.Serializable;
 import java.util.Date;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
 import jpass.util.DateAdapter;
 import jpass.util.IntegerAdapter;
 
+
 /**
- * <p>
- * Classe Java pour entry complex type.
+ * <p>Classe Java pour entry complex type.
  * 
- * <p>
- * Le fragment de schéma suivant indique le contenu attendu figurant dans cette
- * classe.
+ * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
  * 
  * <pre>
  * &lt;complexType name="entry"&gt;
@@ -51,212 +47,248 @@ import jpass.util.IntegerAdapter;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "entry", propOrder = { "title", "url", "user", "password", "notes", "creationDate", "updateDate", "hit", "disabled" })
-public class Entry implements Serializable {
+@XmlType(name = "entry", propOrder = {
+    "title",
+    "url",
+    "user",
+    "password",
+    "notes",
+    "creationDate",
+    "updateDate",
+    "hit",
+    "disabled"
+})
+public class Entry
+    implements Serializable
+{
 
-	private final static long serialVersionUID = -1L;
-	@XmlElement(required = true)
-	protected String title;
-	protected String url;
-	protected String user;
-	protected String password;
-	protected String notes;
-	@XmlElement(required = true, type = String.class)
-	@XmlJavaTypeAdapter(DateAdapter.class)
-	@XmlSchemaType(name = "dateTime")
-	protected Date creationDate;
-	@XmlElement(required = true, type = String.class)
-	@XmlJavaTypeAdapter(DateAdapter.class)
-	@XmlSchemaType(name = "dateTime")
-	protected Date updateDate;
-	@XmlElement(required = true, type = String.class)
-	@XmlJavaTypeAdapter(IntegerAdapter.class)
-	@XmlSchemaType(name = "integer")
-	protected Integer hit;
-	protected boolean disabled;
+    private final static long serialVersionUID = -1L;
+    @XmlElement(required = true)
+    protected String title;
+    protected String url;
+    protected String user;
+    protected String password;
+    protected String notes;
+    @XmlElement(required = true, type = String.class)
+    @XmlJavaTypeAdapter(DateAdapter.class)
+    @XmlSchemaType(name = "dateTime")
+    protected Date creationDate;
+    @XmlElement(required = true, type = String.class)
+    @XmlJavaTypeAdapter(DateAdapter.class)
+    @XmlSchemaType(name = "dateTime")
+    protected Date updateDate;
+    @XmlElement(required = true, type = String.class)
+    @XmlJavaTypeAdapter(IntegerAdapter.class)
+    @XmlSchemaType(name = "integer")
+    protected Integer hit;
+    protected boolean disabled;
 
-	/**
-	 * Obtient la valeur de la propriété title.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getTitle() {
-		return title;
-	}
+    /**
+     * Obtient la valeur de la propriété title.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTitle() {
+        return title;
+    }
 
-	/**
-	 * Définit la valeur de la propriété title.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setTitle(String value) {
-		this.title = value;
-	}
+    /**
+     * Définit la valeur de la propriété title.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTitle(String value) {
+        this.title = value;
+    }
 
-	/**
-	 * Obtient la valeur de la propriété url.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getUrl() {
-		return url;
-	}
+    /**
+     * Obtient la valeur de la propriété url.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getUrl() {
+        return url;
+    }
 
-	/**
-	 * Définit la valeur de la propriété url.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setUrl(String value) {
-		this.url = value;
-	}
+    /**
+     * Définit la valeur de la propriété url.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setUrl(String value) {
+        this.url = value;
+    }
 
-	/**
-	 * Obtient la valeur de la propriété user.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getUser() {
-		return user;
-	}
+    /**
+     * Obtient la valeur de la propriété user.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getUser() {
+        return user;
+    }
 
-	/**
-	 * Définit la valeur de la propriété user.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setUser(String value) {
-		this.user = value;
-	}
+    /**
+     * Définit la valeur de la propriété user.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setUser(String value) {
+        this.user = value;
+    }
 
-	/**
-	 * Obtient la valeur de la propriété password.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getPassword() {
-		return password;
-	}
+    /**
+     * Obtient la valeur de la propriété password.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getPassword() {
+        return password;
+    }
 
-	/**
-	 * Définit la valeur de la propriété password.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setPassword(String value) {
-		this.password = value;
-	}
+    /**
+     * Définit la valeur de la propriété password.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setPassword(String value) {
+        this.password = value;
+    }
 
-	/**
-	 * Obtient la valeur de la propriété notes.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getNotes() {
-		return notes;
-	}
+    /**
+     * Obtient la valeur de la propriété notes.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNotes() {
+        return notes;
+    }
 
-	/**
-	 * Définit la valeur de la propriété notes.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setNotes(String value) {
-		this.notes = value;
-	}
+    /**
+     * Définit la valeur de la propriété notes.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNotes(String value) {
+        this.notes = value;
+    }
 
-	/**
-	 * Obtient la valeur de la propriété creationDate.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public Date getCreationDate() {
-		return creationDate;
-	}
+    /**
+     * Obtient la valeur de la propriété creationDate.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public Date getCreationDate() {
+        return creationDate;
+    }
 
-	/**
-	 * Définit la valeur de la propriété creationDate.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setCreationDate(Date value) {
-		this.creationDate = value;
-	}
+    /**
+     * Définit la valeur de la propriété creationDate.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCreationDate(Date value) {
+        this.creationDate = value;
+    }
 
-	/**
-	 * Obtient la valeur de la propriété updateDate.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public Date getUpdateDate() {
-		return updateDate;
-	}
+    /**
+     * Obtient la valeur de la propriété updateDate.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public Date getUpdateDate() {
+        return updateDate;
+    }
 
-	/**
-	 * Définit la valeur de la propriété updateDate.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setUpdateDate(Date value) {
-		this.updateDate = value;
-	}
+    /**
+     * Définit la valeur de la propriété updateDate.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setUpdateDate(Date value) {
+        this.updateDate = value;
+    }
 
-	/**
-	 * Obtient la valeur de la propriété hit.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public Integer getHit() {
-		return hit;
-	}
+    /**
+     * Obtient la valeur de la propriété hit.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public Integer getHit() {
+        return hit;
+    }
 
-	/**
-	 * Définit la valeur de la propriété hit.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setHit(Integer value) {
-		this.hit = value;
-	}
+    /**
+     * Définit la valeur de la propriété hit.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setHit(Integer value) {
+        this.hit = value;
+    }
 
-	/**
-	 * Obtient la valeur de la propriété disabled.
-	 * 
-	 */
-	public boolean isDisabled() {
-		return disabled;
-	}
+    /**
+     * Obtient la valeur de la propriété disabled.
+     * 
+     */
+    public boolean isDisabled() {
+        return disabled;
+    }
 
-	/**
-	 * Définit la valeur de la propriété disabled.
-	 * 
-	 */
-	public void setDisabled(boolean value) {
-		this.disabled = value;
-	}
+    /**
+     * Définit la valeur de la propriété disabled.
+     * 
+     */
+    public void setDisabled(boolean value) {
+        this.disabled = value;
+    }
 
 }
