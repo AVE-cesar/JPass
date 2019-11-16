@@ -63,6 +63,7 @@ import jpass.ui.action.CloseListener;
 import jpass.ui.action.MenuActionType;
 import jpass.ui.helper.EntryHelper;
 import jpass.ui.helper.FileHelper;
+import jpass.util.DateUtils;
 import jpass.util.FileUtils;
 
 /**
@@ -392,7 +393,8 @@ public final class JPassFrame extends JFrame {
 	 * Refresh frame title based on data model.
 	 */
 	public void refreshFrameTitle() {
-		setTitle((getModel().isModified() ? "*" : "") + (getModel().getFileName() == null ? "Untitled" : getModel().getFileName()) + " - " + PROGRAM_NAME);
+		setTitle((getModel().isModified() ? "* " : "") + (getModel().getFileName() == null ? "Untitled" : getModel().getFileName()) + " - "
+				+ DateUtils.dateToString(getModel().getEntries().getUpdateDate()) + " - " + PROGRAM_NAME);
 	}
 
 	/**

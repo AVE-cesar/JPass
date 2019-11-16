@@ -9,6 +9,9 @@ import jpass.Consts;
 public class DateUtils {
 
 	public static String dateToString(Date value) {
+		if (value == null) {
+			return "";
+		}
 		return new SimpleDateFormat(Consts.DATE_FORMAT).format(value);
 	}
 

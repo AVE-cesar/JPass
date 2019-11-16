@@ -35,6 +35,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -144,6 +145,10 @@ public final class DocumentHelper {
 	 */
 	public void writeDocument(final Entries document) throws DocumentProcessException, IOException {
 		OutputStream outputStream = null;
+		if (document != null) {
+			document.setUpdateDate(new Date());
+		}
+
 		try {
 			if (this.key == null) {
 				outputStream = new FileOutputStream(this.fileName);
