@@ -32,9 +32,11 @@ package jpass.data;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.swing.table.AbstractTableModel;
 
+import jpass.ui.JPassFrame;
 import jpass.util.DateUtils;
 import jpass.xml.bind.Entries;
 import jpass.xml.bind.Entry;
@@ -48,6 +50,8 @@ import jpass.xml.bind.Entry;
 @SuppressWarnings("serial")
 public class DataModel extends AbstractTableModel {
 	private static volatile DataModel INSTANCE;
+
+	private static final Logger LOGGER = Logger.getLogger(JPassFrame.class.getName());
 
 	public static final int TITLE_COLUMN = 0;
 	public static final int URL_COLUMN = 1;
@@ -102,7 +106,7 @@ public class DataModel extends AbstractTableModel {
 	 *            entries
 	 */
 	public final void setEntries(final Entries entries) {
-		System.out.println("On fixe les entrées du model");
+		LOGGER.info("On fixe les entrées du model");
 		this.entries = entries;
 		this.fireTableDataChanged();
 	}
@@ -184,7 +188,7 @@ public class DataModel extends AbstractTableModel {
 	 * @return entry index
 	 */
 	public int getEntryIndexByTitle(String title) {
-		System.out.println("on recherche: " + title);
+		LOGGER.info("on recherche: " + title);
 		return getListOfTitles().indexOf(title);
 	}
 

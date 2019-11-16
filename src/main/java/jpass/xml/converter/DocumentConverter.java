@@ -1,9 +1,11 @@
 package jpass.xml.converter;
 
-import java.math.BigInteger;
+import java.io.File;
 import java.util.Date;
+import java.util.logging.Logger;
 
 import jpass.data.DocumentHelper;
+import jpass.ui.JPassFrame;
 import jpass.util.CryptUtils;
 import jpass.xml.bind.Entries;
 import jpass.xml.bind.Entry;
@@ -17,23 +19,30 @@ import jpass.xml.bind.Entry;
  */
 public class DocumentConverter {
 
+	private static final Logger LOGGER = Logger.getLogger(JPassFrame.class.getName());
+
 	public static void main(String[] args) throws Exception {
-		System.out.println("On convertit le fichier: " + args[0]);
-		DocumentHelper documentHelper = new DocumentHelper(args[0], CryptUtils.getPKCS5Sha256Hash(args[1].toCharArray()));
+		LOGGER.info("On convertit le fichier: " + new File(args[0]).getCanonicalPath());
+		DocumentHelper documentHelper = null;
+		if (args.length == 2) {
+			documentHelper = new DocumentHelper(args[0], CryptUtils.getPKCS5Sha256Hash(args[1].toCharArray()));
+		} else {
+			documentHelper = new DocumentHelper(args[0], null);
+		}
 
 		Entries entries = documentHelper.readDocument();
 		// convert entries to new model
 		for (Entry entry : entries.getEntries()) {
-			System.out.println("Title: " + entry.getTitle());
-			System.out.println("URL: " + entry.getUrl());
-			System.out.println("Username: " + entry.getUser());
-			System.out.println("Password: " + entry.getPassword());
-			System.out.println("Creation date: " + entry.getCreationDate());
-			System.out.println("Update date: " + entry.getUpdateDate());
-			System.out.println("Disable: " + entry.isDisabled());
-			System.out.println("Hit: " + entry.getHit());
+			LOGGER.info("Title: " + entry.getTitle());
+			LOGGER.info("URL: " + entry.getUrl());
+			LOGGER.info("Username: " + entry.getUser());
+			LOGGER.info("Password: " + entry.getPassword());
+			LOGGER.info("Creation date: " + entry.getCreationDate());
+			LOGGER.info("Update date: " + entry.getUpdateDate());
+			LOGGER.info("Disable: " + entry.isDisabled());
+			LOGGER.info("Hit: " + entry.getHit());
 
-			System.out.println("\r\n");
+			LOGGER.info("\r\n");
 
 			if (entry.getCreationDate() == null) {
 				entry.setCreationDate(new Date());
@@ -47,7 +56,7 @@ public class DocumentConverter {
 		}
 
 		documentHelper.writeDocument(entries);
-		System.out.println("Les éléments sans date ont maintenant une date.");
+		LOGGER.info("Les éléments sans date ont maintenant une date.");
 	}
 
 }
