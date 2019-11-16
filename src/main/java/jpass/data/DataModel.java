@@ -36,7 +36,6 @@ import java.util.logging.Logger;
 
 import javax.swing.table.AbstractTableModel;
 
-import jpass.ui.JPassFrame;
 import jpass.util.DateUtils;
 import jpass.xml.bind.Entries;
 import jpass.xml.bind.Entry;
@@ -51,7 +50,7 @@ import jpass.xml.bind.Entry;
 public class DataModel extends AbstractTableModel {
 	private static volatile DataModel INSTANCE;
 
-	private static final Logger LOGGER = Logger.getLogger(JPassFrame.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(DataModel.class.getName());
 
 	public static final int TITLE_COLUMN = 0;
 	public static final int URL_COLUMN = 1;

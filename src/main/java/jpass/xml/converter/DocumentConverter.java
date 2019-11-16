@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.logging.Logger;
 
 import jpass.data.DocumentHelper;
-import jpass.ui.JPassFrame;
 import jpass.util.CryptUtils;
 import jpass.xml.bind.Entries;
 import jpass.xml.bind.Entry;
@@ -19,7 +18,7 @@ import jpass.xml.bind.Entry;
  */
 public class DocumentConverter {
 
-	private static final Logger LOGGER = Logger.getLogger(JPassFrame.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(DocumentConverter.class.getName());
 
 	public static void main(String[] args) throws Exception {
 		LOGGER.info("On convertit le fichier: " + new File(args[0]).getCanonicalPath());

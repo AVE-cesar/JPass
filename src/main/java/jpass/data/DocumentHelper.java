@@ -40,7 +40,7 @@ import java.util.zip.GZIPOutputStream;
 
 import javax.xml.bind.JAXBException;
 
-
+import jpass.Consts;
 import jpass.crypt.io.CryptInputStream;
 import jpass.crypt.io.CryptOutputStream;
 import jpass.util.StringUtils;
@@ -55,104 +55,110 @@ import jpass.xml.converter.JAXBConverter;
  */
 public final class DocumentHelper {
 
-    private static final String SCHEMAS_ENTRIES_XSD = "resources/schemas/entries.xsd";
-
 	/** File name to read/write. */
-    private final String fileName;
+	private final String fileName;
 
-    /** Key for encryption. */
-    private final byte[] key;
+	/** Key for encryption. */
+	private final byte[] key;
 
-    /** Converter between JAXB objects and streams representing XMLs */
-    private static final JAXBConverter<Entries> CONVERTER = new JAXBConverter<Entries>(Entries.class,
-            SCHEMAS_ENTRIES_XSD);
+	/** Converter between JAXB objects and streams representing XMLs */
+	private static final JAXBConverter<Entries> CONVERTER = new JAXBConverter<Entries>(Entries.class, Consts.SCHEMAS_ENTRIES_XSD);
 
-    /**
-     * Creates a DocumentHelper instance.
-     *
-     * @param fileName file name
-     * @param key key for encryption
-     */
-    public DocumentHelper(final String fileName, final byte[] key) {
-        this.fileName = fileName;
-        this.key = key;
-    }
+	/**
+	 * Creates a DocumentHelper instance.
+	 *
+	 * @param fileName
+	 *            file name
+	 * @param key
+	 *            key for encryption
+	 */
+	public DocumentHelper(final String fileName, final byte[] key) {
+		this.fileName = fileName;
+		this.key = key;
+	}
 
-    /**
-     * Creates a document helper with no encryption.
-     *
-     * @param fileName file name
-     * @return a new DocumentHelper object
-     */
-    public static DocumentHelper newInstance(final String fileName) {
-        return new DocumentHelper(fileName, null);
-    }
+	/**
+	 * Creates a document helper with no encryption.
+	 *
+	 * @param fileName
+	 *            file name
+	 * @return a new DocumentHelper object
+	 */
+	public static DocumentHelper newInstance(final String fileName) {
+		return new DocumentHelper(fileName, null);
+	}
 
-    /**
-     * Creates a document helper with encryption.
-     *
-     * @param fileName file name
-     * @param key key for encryption
-     * @return a new DocumentHelper object
-     */
-    public static DocumentHelper newInstance(final String fileName, final byte[] key) {
-        return new DocumentHelper(fileName, key);
-    }
+	/**
+	 * Creates a document helper with encryption.
+	 *
+	 * @param fileName
+	 *            file name
+	 * @param key
+	 *            key for encryption
+	 * @return a new DocumentHelper object
+	 */
+	public static DocumentHelper newInstance(final String fileName, final byte[] key) {
+		return new DocumentHelper(fileName, key);
+	}
 
-    /**
-     * Reads and XML file to an {@link Entries} object.
-     *
-     * @return the document
-     * @throws FileNotFoundException if file is not exists
-     * @throws IOException when I/O error occurred
-     * @throws DocumentProcessException when file format or password is incorrect
-     */
-    public Entries readDocument() throws FileNotFoundException, IOException, DocumentProcessException {
-        InputStream inputStream = null;
-        Entries entries;
-        try {
-            if (this.key == null) {
-                inputStream = new FileInputStream(this.fileName);
-            } else {
-                inputStream = new GZIPInputStream(new CryptInputStream(new FileInputStream(this.fileName), this.key));
-            }
-            entries = CONVERTER.unmarshal(inputStream);
-        } catch (JAXBException e) {
-            throw new DocumentProcessException(StringUtils.stripString(e.getLinkedException() == null ? e.getMessage() : e
-                    .getLinkedException().getMessage()));
-        } finally {
-            if (inputStream != null) {
-                inputStream.close();
-            }
-        }
-        return entries;
-    }
+	/**
+	 * Reads and XML file to an {@link Entries} object.
+	 *
+	 * @return the document
+	 * @throws FileNotFoundException
+	 *             if file is not exists
+	 * @throws IOException
+	 *             when I/O error occurred
+	 * @throws DocumentProcessException
+	 *             when file format or password is incorrect
+	 */
+	public Entries readDocument() throws FileNotFoundException, IOException, DocumentProcessException {
+		InputStream inputStream = null;
+		Entries entries;
+		try {
+			if (this.key == null) {
+				inputStream = new FileInputStream(this.fileName);
+			} else {
+				inputStream = new GZIPInputStream(new CryptInputStream(new FileInputStream(this.fileName), this.key));
+			}
+			entries = CONVERTER.unmarshal(inputStream);
+		} catch (JAXBException e) {
+			throw new DocumentProcessException(StringUtils.stripString(e.getLinkedException() == null ? e.getMessage() : e.getLinkedException().getMessage()));
+		} finally {
+			if (inputStream != null) {
+				inputStream.close();
+			}
+		}
+		return entries;
+	}
 
-    /**
-     * Writes a document into an XML file.
-     *
-     * @param document the document
-     * @throws DocumentProcessException when document format is incorrect
-     * @throws IOException when I/O error occurred
-     */
-    public void writeDocument(final Entries document) throws DocumentProcessException, IOException {
-        OutputStream outputStream = null;
-        try {
-            if (this.key == null) {
-                outputStream = new FileOutputStream(this.fileName);
-            } else {
-                outputStream = new GZIPOutputStream(new CryptOutputStream(new FileOutputStream(this.fileName), this.key));
-            }
-            CONVERTER.marshal(document, outputStream, Boolean.valueOf(this.key == null));
-        } catch (JAXBException e) {
-            throw new DocumentProcessException(StringUtils.stripString(e.getLinkedException() == null ? e.getMessage() : e
-                    .getLinkedException().getMessage()));
-        } catch (Exception e) {
-            throw new DocumentProcessException(e.getMessage());
-        } finally {
-            if (outputStream != null) {
-                outputStream.close();
-            }
-        }
-    }
+	/**
+	 * Writes a document into an XML file.
+	 *
+	 * @param document
+	 *            the document
+	 * @throws DocumentProcessException
+	 *             when document format is incorrect
+	 * @throws IOException
+	 *             when I/O error occurred
+	 */
+	public void writeDocument(final Entries document) throws DocumentProcessException, IOException {
+		OutputStream outputStream = null;
+		try {
+			if (this.key == null) {
+				outputStream = new FileOutputStream(this.fileName);
+			} else {
+				outputStream = new GZIPOutputStream(new CryptOutputStream(new FileOutputStream(this.fileName), this.key));
+			}
+			CONVERTER.marshal(document, outputStream, Boolean.valueOf(this.key == null));
+		} catch (JAXBException e) {
+			throw new DocumentProcessException(StringUtils.stripString(e.getLinkedException() == null ? e.getMessage() : e.getLinkedException().getMessage()));
+		} catch (Exception e) {
+			throw new DocumentProcessException(e.getMessage());
+		} finally {
+			if (outputStream != null) {
+				outputStream.close();
+			}
+		}
+	}
 }
