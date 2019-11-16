@@ -32,6 +32,7 @@ package jpass.ui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -120,6 +121,7 @@ public final class JPassFrame extends JFrame {
 	 * commmande.
 	 * 
 	 * @param args
+	 * @throws IOException
 	 */
 	public JPassFrame(String[] args) {
 		try {
@@ -213,7 +215,10 @@ public final class JPassFrame extends JFrame {
 		setVisible(true);
 
 		if (args.length >= 1) {
-			LOGGER.info("on précharge le fichier passé en ligne de commande: " + args[0]);
+			try {
+				LOGGER.info("on précharge le fichier passé en ligne de commande: " + new File(args[0]).getCanonicalPath());
+			} catch (Exception e) {
+			}
 			FileHelper.doOpenFile(args[0], this);
 		} else {
 			// on recherche un fichier .jpass au même endroit
