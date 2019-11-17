@@ -40,8 +40,9 @@ public class JAXBConverterTest {
 
 			entry.setTitle("a");
 			entries = objectFactory.createEntries();
-			entries.setUpdateDate(new Date());
 			entries.getEntries().add(entry);
+			Date updateDate = new Date();
+			entries.setUpdateDate(updateDate);
 
 			converter.marshal(entries, outputStream, Boolean.valueOf(false));
 
@@ -51,6 +52,11 @@ public class JAXBConverterTest {
 			Assert.assertNotNull(entries);
 			Assert.assertNotNull(entries.getEntries().get(0));
 			Assert.assertNotNull("a".equals(entries.getEntries().get(0).getTitle()));
+
+			System.out.println(entries.getUpdateDate());
+			System.out.println(updateDate.compareTo(entries.getUpdateDate()));
+			// FIXME les 2 dates devraient être égales, pourquoi elles ne le sont pas ?
+			// Assert.assertTrue(entries.getUpdateDate().equals(updateDate));
 		} finally {
 			if (outputStream != null) {
 				outputStream.close();

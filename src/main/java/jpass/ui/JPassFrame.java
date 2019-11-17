@@ -151,6 +151,11 @@ public final class JPassFrame extends JFrame {
 
 		table = new JTable(model);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		table.setDefaultRenderer(Object.class, new JTableColumnRenderer());
+		table.getColumnModel().getColumn(DataModel.TITLE_COLUMN).setPreferredWidth(200);
+		table.getColumnModel().getColumn(DataModel.NOTES_COLUMN).setPreferredWidth(5);
+		table.getColumnModel().getColumn(DataModel.ENABLE_COLUMN).setPreferredWidth(5);
+		table.getColumnModel().getColumn(DataModel.HIT_COLUMN).setPreferredWidth(5);
 		table.addMouseListener(new MyJTableMouseListener());
 		table.setAutoCreateRowSorter(true);
 		table.setFillsViewportHeight(true);

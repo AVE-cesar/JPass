@@ -29,6 +29,8 @@
 
 package jpass.ui.helper;
 
+import java.util.Date;
+
 import javax.swing.table.TableModel;
 
 import jpass.data.DataModel;
@@ -69,6 +71,7 @@ public final class EntryHelper {
 
 			parent.getModel().getEntries().getEntries().remove(parent.getModel().getEntryByTitle(title));
 			parent.getModel().setModified(true);
+			parent.getModel().getEntries().setUpdateDate(new Date());
 			parent.refreshFrameTitle();
 			parent.refreshEntryTitleList(null);
 		}
@@ -93,6 +96,7 @@ public final class EntryHelper {
 		if (ed.getFormData() != null) {
 			parent.getModel().getEntries().getEntries().add(ed.getFormData());
 			parent.getModel().setModified(true);
+			parent.getModel().getEntries().setUpdateDate(new Date());
 			parent.refreshFrameTitle();
 			parent.refreshEntryTitleList(ed.getFormData().getTitle());
 		}
@@ -120,6 +124,7 @@ public final class EntryHelper {
 			// FIXME ne passer setModified à TRUE que si l'utilisateur a fait au moins une
 			// modif
 			parent.getModel().setModified(true);
+			parent.getModel().getEntries().setUpdateDate(new Date());
 			parent.refreshFrameTitle();
 			parent.refreshEntryTitleList(ed.getFormData().getTitle());
 		}
@@ -136,6 +141,7 @@ public final class EntryHelper {
 		if (ed.getFormData() != null) {
 			parent.getModel().getEntries().getEntries().add(ed.getFormData());
 			parent.getModel().setModified(true);
+			parent.getModel().getEntries().setUpdateDate(new Date());
 			parent.refreshFrameTitle();
 			parent.refreshEntryTitleList(ed.getFormData().getTitle());
 		}

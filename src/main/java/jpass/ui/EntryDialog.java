@@ -288,7 +288,7 @@ public class EntryDialog extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * Retrieves the form data.
+	 * Retrieves the form data and fill an entry.
 	 *
 	 * @return an entry
 	 */

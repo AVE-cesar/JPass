@@ -300,7 +300,7 @@ public class DataModel extends AbstractTableModel {
 		case ENABLE_COLUMN:
 			return Boolean.class;
 		case HIT_COLUMN:
-			return String.class;
+			return Integer.class;
 		default:
 			return String.class;
 		}

@@ -130,6 +130,11 @@ public final class DocumentHelper {
 				inputStream.close();
 			}
 		}
+
+		if (entries.getUpdateDate() == null) {
+			entries.setUpdateDate(new Date());
+		}
+
 		return entries;
 	}
 
@@ -145,9 +150,6 @@ public final class DocumentHelper {
 	 */
 	public void writeDocument(final Entries document) throws DocumentProcessException, IOException {
 		OutputStream outputStream = null;
-		if (document != null) {
-			document.setUpdateDate(new Date());
-		}
 
 		try {
 			if (this.key == null) {
